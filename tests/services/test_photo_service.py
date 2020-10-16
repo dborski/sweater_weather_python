@@ -22,3 +22,9 @@ class WeatherService(TestCase):
     self.assertIsNotNone(self.results['results'][0]['links'])
     self.assertIsNotNone(self.results['results'][0]['user'])
 
+  def test_get_single_photo_by_keyword(self):
+    self.assertIsNotNone(self.single_result['width'])
+    self.assertIsNotNone(self.single_result['height'])
+    self.assertIsNotNone(self.single_result['urls'])
+    self.assertIsNotNone(self.single_result['links'])
+    self.assertIsNotNone(self.single_result['user'])
