@@ -16,3 +16,11 @@ def get_photos_by_keyword(search_query):
       return response
     else:
       raise requests.RequestException
+
+def get_single_photo_by_keyword(search_query):
+    results = get_photos_by_keyword(search_query)
+
+    if results.status_code == 200:
+      return results.json()['results'][0]
+    else:
+      raise requests.RequestException

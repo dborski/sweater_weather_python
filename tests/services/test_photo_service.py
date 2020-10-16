@@ -12,7 +12,8 @@ class WeatherService(TestCase):
     search_query = 'denver'
 
     self.results = get_photos_by_keyword(search_query).json()
-    self.single_result = get_single_photo_by_keyword(search_query).json()
+    self.single_result = get_single_photo_by_keyword(search_query)
+    import code; code.interact(local=dict(globals(), **locals()))
 
   def test_get_photos_by_keyword(self):
     self.assertIsInstance(self.results['results'], list)
