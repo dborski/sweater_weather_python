@@ -1,4 +1,4 @@
-# import pytz
+import pytz
 from pytz import timezone
 from datetime import datetime
 import time
@@ -16,13 +16,16 @@ def _forecast_payload():
       }
   }
 
-def covert_to_localtime(utctime, local_timezone, new_format):
-  format = '%Y-%m-%d %H:%M:%S %z'
-  local_time = time.strftime(format, time.localtime(int(utctime)))
-  datetime_obj = datetime.strptime(local_time, format)
-  datetime_new_tz = datetime_obj.replace(tzinfo=timezone(local_timezone))
+# def covert_to_localtime(utctime, local_timezone, new_format):
+#   format = '%Y-%m-%d %H:%M:%S %z'
+#   local_time = time.strftime(format, time.localtime(int(utctime)))
+#   import code; code.interact(local=dict(globals(), **locals()))
+#   # datetime_obj = datetime.strptime(local_time, format)
+#   # datetime_new_tz = datetime_obj.replace(tzinfo=timezone(local_timezone))
 
-  return datetime_new_tz.strftime(new_format)
+#   # now_time = datetime.now(timezone(local_timezone))
+
+  # return now_time.strftime(new_format)
 
 def convert_to_formatted_string(number):
   return f'{number} mph'
@@ -43,12 +46,24 @@ class ForecastParser:
     self.hourly = forecast['hourly']
     self.daily = forecast['daily']
 
+  def covert_to_localtime(self, utctime, new_format):
+    format = '%Y-%m-%d %H:%M:%S %z'
+
+    new_utc_time = utctime + self.timezone_offset
+    local_time = time.strftime(format, time.localtime(new_utc_time))
+    datetime_obj = datetime.strptime(local_time, format)
+    datetime_new_tz = datetime_obj.replace(tzinfo=timezone(self.timezone))
+
+    return datetime_new_tz.strftime(new_format)
+
+
+
   def parse_current_weather(self):
     format = '%Y-%m-%d %H:%M:%S %z'
     return {
-            "datetime": covert_to_localtime(self.current['dt'], self.timezone, format),
-            "sunrise": covert_to_localtime(self.current['sunrise'], self.timezone, format),
-            "sunset": covert_to_localtime(self.current['sunset'], self.timezone, format),
+            "datetime": self.covert_to_localtime(self.current['dt'], format),
+            "sunrise": self.covert_to_localtime(self.current['sunrise'], format),
+            "sunset": self.covert_to_localtime(self.current['sunset'], format),
             "temperature": self.current['temp'],
             "feels_like": self.current['feels_like'],
             "humidity": self.current['humidity'],
@@ -66,7 +81,7 @@ class ForecastParser:
       if i < 8:
         hourly.append(
             {
-                "time": covert_to_localtime(weather_info['dt'], self.timezone, format),
+                "time": self.covert_to_localtime(weather_info['dt'], format),
                 "temp": weather_info['temp'],
                 "wind_speed": convert_to_formatted_string(weather_info['wind_speed']),
                 "wind_direction": convert_to_cardinals(weather_info['wind_deg']),
@@ -88,9 +103,9 @@ class ForecastParser:
       if i < 5:
         daily.append(
             {
-                "date": covert_to_localtime(weather_info['dt'], self.timezone, date_format),
-                "sunrise": covert_to_localtime(weather_info['sunrise'], self.timezone, full_format),
-                "sunset": covert_to_localtime(weather_info['sunset'], self.timezone, full_format),
+                "date": self.covert_to_localtime(weather_info['dt'], date_format),
+                "sunrise": self.covert_to_localtime(weather_info['sunrise'], full_format),
+                "sunset": self.covert_to_localtime(weather_info['sunset'], full_format),
                 "max_temp": weather_info['temp']['max'],
                 "min_temp": weather_info['temp']['min'],
                 "conditions": weather_info['weather'][0]['description'],
