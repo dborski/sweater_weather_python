@@ -16,14 +16,24 @@ def _forecast_payload(forecast):
       }
   }
 
-def covert_to_localtime(utctime, local_timezone):
+def covert_to_localtime(utctime, local_timezone, new_format):
   format = '%Y-%m-%d %H:%M:%S %z'
   local_time = time.strftime(format, time.localtime(int(utctime)))
   datetime_obj = datetime.strptime(local_time, format)
   datetime_new_tz = datetime_obj.replace(tzinfo=timezone(local_timezone))
 
-  return datetime_new_tz.strftime(format)
+  return datetime_new_tz.strftime(new_format)
 
+def convert_to_formatted_string(number):
+  return f'{number} mph'
+
+def convert_to_cardinals(degrees):
+  dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
+          'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
+  
+  ix = round(degrees / (360. / len(dirs)))
+  cardinal = dirs[ix % len(dirs)]
+  return f'from {cardinal}'
 
 class ForecastParser:
   def __init__(self, forecast):
@@ -34,10 +44,11 @@ class ForecastParser:
     self.daily = forecast['daily']
 
   def parse_current_weather(self):
+    format = '%Y-%m-%d %H:%M:%S %z'
     return {
-            "datetime": covert_to_localtime(self.current['dt'], self.timezone),
-            "sunrise": covert_to_localtime(self.current['sunrise'], self.timezone),
-            "sunset": covert_to_localtime(self.current['sunset'], self.timezone),
+            "datetime": covert_to_localtime(self.current['dt'], self.timezone, format),
+            "sunrise": covert_to_localtime(self.current['sunrise'], self.timezone, format),
+            "sunset": covert_to_localtime(self.current['sunset'], self.timezone, format),
             "temperature": self.current['temp'],
             "feels_like": self.current['feels_like'],
             "humidity": self.current['humidity'],
@@ -48,15 +59,25 @@ class ForecastParser:
     }
 
   def parse_hourly_weather(self):
-    payload = [
-        {
-            "time": "14:00:00",
-            "wind_speed": "4 mph",
-            "wind_direction": "from NW",
-            "conditions": 'very sunny and warm today',
-            "icon": 'd45'
-        }
-    ]
+    format = '%H:%M:%S'
+    hourly = []
+
+    for i, weather_info in enumerate(self.hourly):
+      if i < 8:
+        hourly.append(
+            {
+                "time": covert_to_localtime(weather_info['dt'], self.timezone, format),
+                "temp": weather_info['temp'],
+                "wind_speed": convert_to_formatted_string(weather_info['wind_speed']),
+                "wind_direction": convert_to_cardinals(weather_info['wind_deg']),
+                "conditions": weather_info['weather'][0]['description'],
+                "icon": weather_info['weather'][0]['icon']
+            }
+        )
+      else:
+        break
+
+    return hourly
   
   def parse_daily_weather(self):
     payload = [
