@@ -1,6 +1,3 @@
-import os
-import json
-import requests
 from django.test import TestCase
 from api.services.photo_service import get_photos_by_keyword, get_single_photo_by_keyword
 
