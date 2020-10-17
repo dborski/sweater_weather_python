@@ -33,3 +33,12 @@ class ForecastParserTest(TestCase):
     self.assertIsInstance(self.parser.parse_current_weather()['conditions'], str)
     self.assertIsInstance(self.parser.parse_current_weather()['icon'], str)
 
+  def test_parse_hourly_weather(self):
+    self.assertEqual(len(self.parser.parse_hourly_weather()), 8)
+    self.assertIsInstance(self.parser.parse_hourly_weather()[0]['time'], str)
+    self.assertIsInstance(self.parser.parse_hourly_weather()[0]['temp'], float)
+    self.assertIsInstance(self.parser.parse_hourly_weather()[0]['wind_speed'], str)
+    self.assertIsInstance(self.parser.parse_hourly_weather()[0]['wind_direction'], str)
+    self.assertIsInstance(self.parser.parse_hourly_weather()[0]['conditions'], str)
+    self.assertIsInstance(self.parser.parse_hourly_weather()[0]['icon'], str)
+
