@@ -9,10 +9,11 @@ from rest_framework.parsers import JSONParser
 
 from api.services.location_service import get_latlng
 from api.services.weather_service import get_forecast
+from api.popos.forecast_parser import ForecastParser
 
 
 class ForecastView(APIView):
-  parser_classes = [JSONParser]
+  # parser_classes = [JSONParser]
 
   def get(self, request):
     # Capture location of requested city
@@ -25,15 +26,13 @@ class ForecastView(APIView):
     results = get_latlng(city, state)
 
     # with lat and lng, get full forecast for city
-    forecast = get_forecast(results['lat'], results['lng']).json()
+    forecast = get_forecast(str(results['lat']), str(results['lng'])).json()
 
     # Parse through full forecast to pull out only needed attributes
     # ForecastParser(forecast).forecast_payload
     # Setup forecast payload with blank hash to be filled in
     # Each part of the hash is filled in by the parser to complete payload
 
-    # import code; code.interact(local=dict(globals(), **locals()))
+    forecast_payload = ForecastParser(forecast).get_forecast_payload()
 
-    # return forecast_payload
-
-    return ""
+    return JsonResponse(forecast_payload)
