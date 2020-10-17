@@ -3,8 +3,6 @@ import json
 import requests
 from django.test import TestCase
 from api.services.weather_service import get_forecast
-from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv())
 
 
 class WeatherService(TestCase):
