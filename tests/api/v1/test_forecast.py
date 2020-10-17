@@ -8,7 +8,6 @@ from api.services.photo_service import get_photos_by_keyword, get_single_photo_b
 
 class GetForecastTest(TestCase):
   def test_get_weather_for_a_city(self):
-    params = {'location': 'denver,co'}
-    response = self.client.get('/api/v1/forecast', params=params)
+    response = self.client.get('/api/v1/forecast?location=denver,co')
 
     self.assertEqual(response.status_code, 200)
