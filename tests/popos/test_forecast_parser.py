@@ -2,7 +2,6 @@ from django.test import TestCase
 from api.popos.forecast_parser import ForecastParser
 from api.services.weather_service import get_forecast
 
-
 class ForecastParserTest(TestCase):
   def setUp(self):
     self.lat = '39.738453'
