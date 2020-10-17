@@ -3,7 +3,7 @@ from pytz import timezone
 from datetime import datetime
 import time
 
-def _forecast_payload(forecast):
+def _forecast_payload():
   return {
       "data": {
           "id": None,
@@ -80,14 +80,30 @@ class ForecastParser:
     return hourly
   
   def parse_daily_weather(self):
-    payload = [
-        {
-            "date": "2020-10-01",
-            "sunrise": "2020-09-30 13:27:03 -0600",
-            "sunset": "2020-09-30 13:27:03 -0600",
-            "max_temp": 79.4,
-            "min_temp": 59.4,
-            "conditions": 'very sunny and warm today',
-            "icon": 'd45'
-        }
-    ]
+    date_format = '%Y-%m-%d'
+    full_format = '%Y-%m-%d %H:%M:%S %z'
+    daily = []
+
+    for i, weather_info in enumerate(self.daily):
+      if i < 5:
+        daily.append(
+            {
+                "date": covert_to_localtime(weather_info['dt'], self.timezone, date_format),
+                "sunrise": covert_to_localtime(weather_info['sunrise'], self.timezone, full_format),
+                "sunset": covert_to_localtime(weather_info['sunset'], self.timezone, full_format),
+                "max_temp": weather_info['temp']['max'],
+                "min_temp": weather_info['temp']['min'],
+                "conditions": weather_info['weather'][0]['description'],
+                "icon": weather_info['weather'][0]['icon']
+            }
+        )
+
+    return daily
+
+  def get_forecast_payload(self):
+    payload = _forecast_payload()
+    payload['data']['attributes']['current_weather'] = self.parse_current_weather()
+    payload['data']['attributes']['hourly_weather'] = self.parse_hourly_weather()
+    payload['data']['attributes']['daily_weather'] = self.parse_daily_weather()
+    
+    return payload
