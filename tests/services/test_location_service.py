@@ -3,8 +3,6 @@ import json
 import requests
 from django.test import TestCase
 from api.services.location_service import get_latlng
-from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv())
 
 
 class LocationService(TestCase):

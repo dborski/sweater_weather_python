@@ -3,8 +3,6 @@ import json
 import requests
 from django.test import TestCase
 from api.services.weather_service import get_forecast
-from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv())
 
 
 class WeatherService(TestCase):
@@ -21,7 +19,7 @@ class WeatherService(TestCase):
     self.assertIsInstance(self.results['current']['dt'], int)
     self.assertIsInstance(self.results['current']['sunrise'], int)
     self.assertIsInstance(self.results['current']['sunset'], int)
-    self.assertIsInstance(self.results['current']['temp'], float)
+    self.assertIsNotNone(self.results['current']['temp'])
     self.assertIsInstance(self.results['current']['feels_like'], float)
     self.assertIsInstance(self.results['current']['pressure'], int)
     self.assertIsInstance(self.results['current']['humidity'], int)
@@ -29,7 +27,7 @@ class WeatherService(TestCase):
     self.assertIsInstance(self.results['current']['uvi'], float)
     self.assertIsInstance(self.results['current']['clouds'], int)
     self.assertIsInstance(self.results['current']['visibility'], int)
-    self.assertIsInstance(self.results['current']['wind_speed'], float)
+    self.assertIsNotNone(self.results['current']['wind_speed'])
     self.assertIsInstance(self.results['current']['wind_deg'], int)
     self.assertIsNotNone(self.results['current']['weather'][0]['main'])
     self.assertIsNotNone(self.results['current']['weather'][0]['description'])
@@ -38,8 +36,8 @@ class WeatherService(TestCase):
   def test_get_hourly_weather_for_location(self):
     self.assertIsNotNone(self.results['hourly'])
     self.assertIsInstance(self.results['hourly'][0]['dt'], int)
-    self.assertIsInstance(self.results['hourly'][0]['temp'], float)
-    self.assertIsInstance(self.results['hourly'][0]['feels_like'], float)
+    self.assertIsNotNone(self.results['hourly'][0]['temp'])
+    self.assertIsNotNone(self.results['hourly'][0]['feels_like'])
     self.assertIsInstance(self.results['hourly'][0]['pressure'], int)
     self.assertIsInstance(self.results['hourly'][0]['humidity'], int)
     self.assertIsInstance(self.results['hourly'][0]['dew_point'], float)
