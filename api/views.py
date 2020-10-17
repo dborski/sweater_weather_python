@@ -28,11 +28,6 @@ class ForecastView(APIView):
     # with lat and lng, get full forecast for city
     forecast = get_forecast(str(results['lat']), str(results['lng'])).json()
 
-    # Parse through full forecast to pull out only needed attributes
-    # ForecastParser(forecast).forecast_payload
-    # Setup forecast payload with blank hash to be filled in
-    # Each part of the hash is filled in by the parser to complete payload
-
     forecast_payload = ForecastParser(forecast).get_forecast_payload()
 
     return JsonResponse(forecast_payload)

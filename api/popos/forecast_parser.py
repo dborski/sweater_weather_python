@@ -16,16 +16,6 @@ def _forecast_payload():
       }
   }
 
-# def covert_to_localtime(utctime, local_timezone, new_format):
-#   format = '%Y-%m-%d %H:%M:%S %z'
-#   local_time = time.strftime(format, time.localtime(int(utctime)))
-#   import code; code.interact(local=dict(globals(), **locals()))
-#   # datetime_obj = datetime.strptime(local_time, format)
-#   # datetime_new_tz = datetime_obj.replace(tzinfo=timezone(local_timezone))
-
-#   # now_time = datetime.now(timezone(local_timezone))
-
-  # return now_time.strftime(new_format)
 
 def convert_to_formatted_string(number):
   return f'{number} mph'
@@ -55,7 +45,6 @@ class ForecastParser:
     datetime_new_tz = datetime_obj.replace(tzinfo=timezone(self.timezone))
 
     return datetime_new_tz.strftime(new_format)
-
 
 
   def parse_current_weather(self):
@@ -112,6 +101,8 @@ class ForecastParser:
                 "icon": weather_info['weather'][0]['icon']
             }
         )
+      else:
+        break
 
     return daily
 
