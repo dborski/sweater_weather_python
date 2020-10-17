@@ -7,6 +7,7 @@ from api.services.location_service import get_latlng
 from api.services.weather_service import get_forecast
 from api.services.photo_service import get_single_photo_by_keyword
 from api.popos.forecast_parser import ForecastParser
+from api.popos.photo_parser import PhotoParser
 
 
 class ForecastView(APIView):
@@ -35,16 +36,12 @@ class BackgroundView(APIView):
     location = request.GET['location']
 
     # split string and just use the city
-
     city = location.split(",")[0]
 
     # make api call to photo service with get single photo function
-
     photo_data = get_single_photo_by_keyword(city)
 
     # Grab information from api response and craft payload in PhotoParser
-    # payload = PhotoParser(photo_data).get_photo_payload()
+    background_payload = PhotoParser(photo_data, location).get_photo_payload()
 
-    # return payload
-
-    import code; code.interact(local=dict(globals(), **locals()))
+    return JsonResponse(background_payload)
