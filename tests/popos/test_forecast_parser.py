@@ -53,7 +53,6 @@ class ForecastParserTest(TestCase):
     self.assertIsInstance(self.parser.parse_daily_weather()[0]['icon'], str)
 
   def test_get_forecast_payload(self):
-    self.assertIsNone(self.parser.get_forecast_payload()['data']['id'])
     self.assertEqual(self.parser.get_forecast_payload()['data']['type'], 'forecast')
     self.assertIsInstance(self.parser.get_forecast_payload()['data']['attributes']['current_weather']['datetime'], str)
     self.assertIsInstance(self.parser.get_forecast_payload()['data']['attributes']['hourly_weather'][0]['time'], str)
