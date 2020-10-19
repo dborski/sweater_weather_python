@@ -11,24 +11,21 @@ from api.popos.photo_parser import PhotoParser
 
 
 class ForecastView(APIView):
-  # parser_classes = [JSONParser]
-
   def get(self, request):
-    # Capture location of requested city
     location = request.GET['location']
+    split_location = location.split(",")
 
-    # Split the location into city, state
-    city, state = location.split(",")
-
-    # get geocded lat and lng for the above locations
-    results = get_latlng(city, state)
-
-    # with lat and lng, get full forecast for city
-    forecast = get_forecast(str(results['lat']), str(results['lng'])).json()
-
-    forecast_payload = ForecastParser(forecast).get_forecast_payload()
-
-    return JsonResponse(forecast_payload)
+    if len(split_location) == 2:
+      results = get_latlng(split_location[0], split_location[1])
+      forecast = get_forecast(str(results['lat']), str(results['lng'])).json()
+      forecast_payload = ForecastParser(forecast).get_forecast_payload()
+      return JsonResponse(forecast_payload)
+    else:
+      return JsonResponse({
+          'success': False,
+          'error': 400,
+          'errors': "Must supply city and state ex. ?location=denver,co"
+      }, status=400)
 
 class BackgroundView(APIView):
 
