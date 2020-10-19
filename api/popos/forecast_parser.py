@@ -49,6 +49,7 @@ class ForecastParser:
 
   def parse_current_weather(self):
     format = '%Y-%m-%d %H:%M:%S %z'
+    
     return {
             "datetime": self.covert_to_localtime(self.current['dt'], format),
             "sunrise": self.covert_to_localtime(self.current['sunrise'], format),
@@ -66,7 +67,6 @@ class ForecastParser:
     format = '%H:%M:%S'
     eight_hours = self.hourly[:8]
     hourly = []
-
 
     for weather_info in eight_hours:
         hourly.append(
