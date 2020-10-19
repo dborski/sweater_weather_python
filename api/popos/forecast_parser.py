@@ -64,10 +64,11 @@ class ForecastParser:
 
   def parse_hourly_weather(self):
     format = '%H:%M:%S'
+    eight_hours = self.hourly[:8]
     hourly = []
 
-    for i, weather_info in enumerate(self.hourly):
-      if i < 8:
+
+    for weather_info in eight_hours:
         hourly.append(
             {
                 "time": self.covert_to_localtime(weather_info['dt'], format),
@@ -78,18 +79,16 @@ class ForecastParser:
                 "icon": weather_info['weather'][0]['icon']
             }
         )
-      else:
-        break
 
     return hourly
   
   def parse_daily_weather(self):
     date_format = '%Y-%m-%d'
     full_format = '%Y-%m-%d %H:%M:%S %z'
+    five_days = self.daily[:5]
     daily = []
 
-    for i, weather_info in enumerate(self.daily):
-      if i < 5:
+    for weather_info in five_days:
         daily.append(
             {
                 "date": self.covert_to_localtime(weather_info['dt'], date_format),
@@ -101,13 +100,11 @@ class ForecastParser:
                 "icon": weather_info['weather'][0]['icon']
             }
         )
-      else:
-        break
 
     return daily
 
   def get_forecast_payload(self):
-    payload = _forecast_payload()
+    payload = _forecast_payload().copy()
     payload['data']['attributes']['current_weather'] = self.parse_current_weather()
     payload['data']['attributes']['hourly_weather'] = self.parse_hourly_weather()
     payload['data']['attributes']['daily_weather'] = self.parse_daily_weather()
