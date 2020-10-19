@@ -1,5 +1,5 @@
 import json
-from django.http import JsonResponse, QueryDict
+from django.http import JsonResponse
 from django.http import HttpResponse
 from rest_framework.views import APIView
 
@@ -11,37 +11,42 @@ from api.popos.photo_parser import PhotoParser
 
 
 class ForecastView(APIView):
-  # parser_classes = [JSONParser]
-
   def get(self, request):
-    # Capture location of requested city
+    error_payload = {
+        'success': False,
+        'error': 400,
+        'errors': "Must supply city and state ex. /forecast?location=denver,co"
+    }
+
     location = request.GET['location']
 
-    # Split the location into city, state
-    city, state = location.split(",")
+    if location:
+      split_location = location.split(",")
+    else:
+      return JsonResponse(error_payload, status=400)
 
-    # get geocded lat and lng for the above locations
-    results = get_latlng(city, state)
-
-    # with lat and lng, get full forecast for city
-    forecast = get_forecast(str(results['lat']), str(results['lng'])).json()
-
-    forecast_payload = ForecastParser(forecast).get_forecast_payload()
-
-    return JsonResponse(forecast_payload)
+    if len(split_location) == 2:
+      results = get_latlng(split_location[0], split_location[1])
+      forecast = get_forecast(str(results['lat']), str(results['lng'])).json()
+      forecast_payload = ForecastParser(forecast).get_forecast_payload()
+      return JsonResponse(forecast_payload)
+    else:
+      return JsonResponse(error_payload, status=400)
+  
 
 class BackgroundView(APIView):
-
   def get(self, request):
-    location = request.GET['location']
+    error_payload = {
+          'success': False,
+          'error': 400,
+          'errors': "Must search query param /backgrounds?location=denver,co"
+    }
 
-    # split string and just use the city
-    city = location.split(",")[0]
-
-    # make api call to photo service with get single photo function
-    photo_data = get_single_photo_by_keyword(city)
-
-    # Grab information from api response and craft payload in PhotoParser
-    background_payload = PhotoParser(photo_data, location).get_photo_payload()
-
-    return JsonResponse(background_payload)
+    if request.GET:
+      location = request.GET['location']
+      city = location.split(",")[0]
+      photo_data = get_single_photo_by_keyword(city)
+      background_payload = PhotoParser(photo_data, location).get_photo_payload()
+      return JsonResponse(background_payload)
+    else:
+      return JsonResponse(error_payload, status=400)
