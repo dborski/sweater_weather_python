@@ -56,6 +56,8 @@ def _login_success(request, body, user):
       return True
     else:
       return False
+  else:
+    False
 
 def _user_payload(user):
   return {
