@@ -2,6 +2,10 @@ import json
 from django.http import JsonResponse
 from django.http import HttpResponse
 from rest_framework.views import APIView
+from rest_framework.parsers import JSONParser
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+import uuid
 
 from api.services.location_service import get_latlng
 from api.services.weather_service import get_forecast
@@ -9,6 +13,30 @@ from api.services.photo_service import get_single_photo_by_keyword
 from api.popos.forecast_parser import ForecastParser
 from api.popos.photo_parser import PhotoParser
 
+
+def _registration_success(body):
+    try:
+      user_check = User.objects.get(email=body['email'])
+      return False
+    except ObjectDoesNotExist:
+      ''
+    
+    if body['password'] == body['password_confirmation']:
+      return True
+    else:
+      return False
+
+def _user_payload(user):
+  return {
+      "data": {
+          "type": "users",
+          "id": user.id,
+          "attributes": {
+              "email": user.email,
+              "api_key": user.api_key
+          }
+      }
+  }
 
 class ForecastView(APIView):
   def get(self, request):
@@ -50,3 +78,14 @@ class BackgroundView(APIView):
       return JsonResponse(background_payload)
     else:
       return JsonResponse(error_payload, status=400)
+
+class UserRegistrationView(APIView):
+  def post(self, request):
+    body = request.POST
+
+    if _registration_success(body):
+      new_user = User.objects.create_user(body['email'], body['email'], body['password'])
+      new_user.api_key = str(uuid.uuid4())
+      return JsonResponse(_user_payload(new_user), status=201)
+    else:
+      return 'Errors'
