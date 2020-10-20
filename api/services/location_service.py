@@ -25,3 +25,20 @@ def get_latlng(city, state):
       return payload
     else:
       raise requests.RequestException
+
+def get_directions(start_location, end_location):
+    from_city, from_state = start_location.lower().split(",")
+    to_city, to_state = end_location.lower().split(",")
+
+    response = requests.get(
+        'http://www.mapquestapi.com'
+        '/directions/v2/route'
+        f"?key={os.getenv('MAPQUEST_KEY')}"
+        f'&from={from_city},{from_state}'
+        f'&to={to_city},{to_state}'
+    )
+
+    if response.status_code == 200:
+      return response
+    else:
+      raise requests.RequestException
