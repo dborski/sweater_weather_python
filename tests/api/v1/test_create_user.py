@@ -58,3 +58,45 @@ class UserTest(TestCase):
     self.assertEqual(json_response['error'], 400)
     self.assertEqual(json_response['errors'], 'The passwords do not match')
 
+  def test_sad_path_post_user_with_missing_email(self):
+    body = {
+      'password': 'password',
+      'password_confirmation': 'password34',
+    }
+    response = self.client.post('/api/v1/users', body)
+
+    json_response = response.json()
+
+    self.assertEqual(response.status_code, 400)
+    self.assertEqual(json_response['success'], False)
+    self.assertEqual(json_response['error'], 400)
+    self.assertEqual(json_response['errors'], 'Missing email')
+
+  def test_sad_path_post_user_with_missing_password(self):
+    body = {
+      'email': 'new_user@email.com',
+      'password_confirmation': 'password34',
+    }
+    response = self.client.post('/api/v1/users', body)
+
+    json_response = response.json()
+
+    self.assertEqual(response.status_code, 400)
+    self.assertEqual(json_response['success'], False)
+    self.assertEqual(json_response['error'], 400)
+    self.assertEqual(json_response['errors'], 'Missing password')
+
+  def test_sad_path_post_user_with_missing_password(self):
+    body = {
+      'email': 'new_user@email.com',
+      'password': 'password34',
+    }
+    response = self.client.post('/api/v1/users', body)
+
+    json_response = response.json()
+
+    self.assertEqual(response.status_code, 400)
+    self.assertEqual(json_response['success'], False)
+    self.assertEqual(json_response['error'], 400)
+    self.assertEqual(json_response['errors'], 'Missing password confirmation')
+
