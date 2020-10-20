@@ -86,7 +86,7 @@ class UserTest(TestCase):
     self.assertEqual(json_response['error'], 400)
     self.assertEqual(json_response['errors'], 'Missing password')
 
-  def test_sad_path_post_user_with_missing_password(self):
+  def test_sad_path_post_user_with_missing_password_confirmation(self):
     body = {
       'email': 'new_user@email.com',
       'password': 'password34',
