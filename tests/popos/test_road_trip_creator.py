@@ -8,12 +8,14 @@ class RoadTripCreatorTest(TestCase):
   def setUp(self):
     self.start_location = 'denver,co'
     self.end_location = 'taos,nm'
+    self.bad_end_location = 'london, uk'
 
     self.user1 = User.objects.create_user(
         username='user1@email.com', email='user1@email.com', password='password'
     )
 
     self.creator = RoadTripCreator(self.start_location, self.end_location, self.user1)
+    self.creator_bad = RoadTripCreator(self.start_location, self.bad_end_location, self.user1)
 
   def test_it_exists(self):
     self.assertIsInstance(self.creator, RoadTripCreator)
@@ -28,11 +30,12 @@ class RoadTripCreatorTest(TestCase):
     self.assertIsInstance(self.creator.get_travel_time()[0], str)
 
   def test_sad_path_get_travel_time_that_is_impossible(self):
-    bad_end_location = 'london, uk'
-    creator_bad = RoadTripCreator(self.start_location, bad_end_location, self.user1)
+    self.assertEqual(self.creator_bad.get_travel_time(), 'Impossible')
 
-    self.assertEqual(creator_bad.get_travel_time(), 'Impossible')
-
-  def test_get_weather_at_eta(self):
+  def test_happy_path_get_weather_at_eta(self):
     self.assertIsInstance(self.creator.get_weather_at_eta()['temperature'], float)
     self.assertIsInstance(self.creator.get_weather_at_eta()['conditions'], str)
+
+  def test_sad_path_get_weather_at_eta_that_is_impossible(self):
+    self.assertEqual(self.creator_bad.get_weather_at_eta()['temperature'], 'Impossible')
+    self.assertEqual(self.creator_bad.get_weather_at_eta()['conditions'], 'Impossible')
