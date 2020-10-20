@@ -72,7 +72,7 @@ class ForecastView(APIView):
     if location:
       split_location = location.split(",")
     else:
-      return JsonResponse(error_payload, status=400)
+      return JsonResponse(_error_payload, status=400)
 
     if len(split_location) == 2:
       results = get_latlng(split_location[0], split_location[1])
@@ -102,7 +102,11 @@ class UserRegistrationView(APIView):
     errors = []
 
     if _registration_success(body, errors):
-      new_user = User.objects.create_user(body['email'], body['email'], body['password'])
+      new_user = User.objects.create_user(
+        body['email'], 
+        body['email'], 
+        body['password']
+      )
       return JsonResponse(_user_payload(new_user), status=201)
     else:
       return JsonResponse(_error_payload(errors[0]), status=400)
