@@ -141,11 +141,12 @@ class RoadTripView(APIView):
     # Find the user that has the api key in the request body
     user = User.objects.get(profile__api_key=body['api_key'])
 
-    directions = get_directions(body['origin'], body['destination'])
+    # directions = get_directions(body['origin'], body['destination'])
 
     # Call a new class called RoadTripCreator that handles the creation
-    # forecast_payload = RoadTripCreator(directions, user).get_road_trip_payload()
+    trip_payload = RoadTripCreator(body['origin'], body['destination'], user).create_road_trip()
 
+    return JsonResponse(trip_payload, status=201)
     # Before road trip creator:
     # Need to create road trip model with following attributes:
     # Needs to be attached to user model one-to-many
@@ -168,4 +169,4 @@ class RoadTripView(APIView):
 
 
     # return JsonResponse(forecast_payload)
-    return ''
+    
