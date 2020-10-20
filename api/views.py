@@ -98,7 +98,7 @@ class BackgroundView(APIView):
 
 class UserRegistrationView(APIView):
   def post(self, request):
-    body = request.POST
+    body = request.data
     errors = []
 
     if _registration_success(body, errors):
