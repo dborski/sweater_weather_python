@@ -2,9 +2,10 @@ import json
 from django.http import JsonResponse
 from django.http import HttpResponse
 from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser
+# from rest_framework.parsers import JSONParser
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import authenticate, login
 import uuid
 
 from api.services.location_service import get_latlng
@@ -110,3 +111,14 @@ class UserRegistrationView(APIView):
       return JsonResponse(_user_payload(new_user), status=201)
     else:
       return JsonResponse(_error_payload(errors[0]), status=400)
+
+class UserLoginView(APIView):
+  def post(self, request):
+    username = request.data['username']
+    password = request.data['password']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+      login(request, user)
+      return JsonResponse(_user_payload(user), status=200)
+    else: 
+      return 'Credentials are incorrect'
