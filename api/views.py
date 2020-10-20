@@ -59,10 +59,10 @@ def _user_payload(user):
       }
   }
 
-def _error_payload(error):
+def _error_payload(error, code=400):
   return {
       'success': False,
-      'error': 400,
+      'error': code,
       'errors': error
   }
 
@@ -122,4 +122,4 @@ class UserLoginView(APIView):
       return JsonResponse(_user_payload(user), status=200)
     else:
       error = 'Credentials are incorrect'
-      return JsonResponse(_error_payload(error), status=400)
+      return JsonResponse(_error_payload(error, 401), status=401)
