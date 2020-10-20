@@ -103,7 +103,6 @@ class UserRegistrationView(APIView):
 
     if _registration_success(body, errors):
       new_user = User.objects.create_user(body['email'], body['email'], body['password'])
-      new_user.profile.api_key = str(uuid.uuid4())
       return JsonResponse(_user_payload(new_user), status=201)
     else:
       return JsonResponse(_error_payload(errors[0]), status=400)
