@@ -47,6 +47,16 @@ def _registration_success(body, errors):
       errors.append("The passwords do not match")
       return False
 
+def _login_success(request, body, user):
+  if 'username' and 'password' in body:
+    found_user = authenticate(request, username=body['username'], password=body['password'])
+    if found_user is not None:
+      user.append(found_user)
+      login(request, found_user)
+      return True
+    else:
+      return False
+
 def _user_payload(user):
   return {
       "data": {
@@ -114,12 +124,11 @@ class UserRegistrationView(APIView):
 
 class UserLoginView(APIView):
   def post(self, request):
-    username = request.data['username']
-    password = request.data['password']
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-      login(request, user)
-      return JsonResponse(_user_payload(user), status=200)
+    body = request.data
+    user = []
+
+    if _login_success(request, body, user):
+      return JsonResponse(_user_payload(user[0]), status=200)
     else:
       error = 'Credentials are incorrect'
       return JsonResponse(_error_payload(error, 401), status=401)
