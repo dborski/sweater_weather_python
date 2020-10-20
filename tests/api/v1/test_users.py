@@ -103,20 +103,20 @@ class UserLoginTest(TestCase):
   def setUp(self):
     self.user1 = User.objects.create_user(
         username='currentuser1@email.com',
-        email='currentuse1r@email.com',
+        email='currentuser1@email.com',
         password='password1'
     )
 
     self.user2 = User.objects.create_user(
         username='currentuser2@email.com',
-        email='currentuse2r@email.com',
+        email='currentuser2@email.com',
         password='password2'
     )
   
   def test_happy_path_logs_in_a_user(self):
     body = {
-      'email': 'currentuser2@email.com',
-      'password': 'password2',
+      'username': 'currentuser2@email.com',
+      'password': 'password2'
     }
     response = self.client.post('/api/v1/sessions', body)
 
