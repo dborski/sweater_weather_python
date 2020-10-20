@@ -1,5 +1,7 @@
 import json
 from django.test import TestCase
+from django.contrib.auth.models import User
+
 
 
 class UserTest(TestCase):
@@ -11,10 +13,10 @@ class UserTest(TestCase):
     }
     response = self.client.post('/api/v1/users', body)
 
-    # json_response = response.json()
+    json_response = response.json()
 
     self.assertEqual(response.status_code, 201)
     self.assertEqual(json_response['data']['type'], 'users')
-    self.assertIsInstance(json_response['data']['id'], str)
+    self.assertIsInstance(json_response['data']['id'], int)
     self.assertEqual(json_response['data']['attributes']['email'], body['email'])
     self.assertIsInstance(json_response['data']['attributes']['api_key'], str)
