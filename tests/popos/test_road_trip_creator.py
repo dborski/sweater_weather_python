@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from api.models import RoadTrip
 from api.popos.road_trip_creator import RoadTripCreator
 from api.services.location_service import get_directions
 
@@ -39,3 +40,14 @@ class RoadTripCreatorTest(TestCase):
   def test_sad_path_get_weather_at_eta_that_is_impossible(self):
     self.assertEqual(self.creator_bad.get_weather_at_eta()['temperature'], 'Impossible')
     self.assertEqual(self.creator_bad.get_weather_at_eta()['conditions'], 'Impossible')
+
+  def test_happy_path_create_road_trip(self):
+    self.creator.create_road_trip()
+
+    road_trip = RoadTrip.objects.last()
+
+    self.assertEqual(road_trip.start_city, 'denver,co')
+    self.assertEqual(road_trip.end_city, 'taos,nm')
+    self.assertIsInstance(road_trip.travel_time, str)
+    self.assertIsNotNone(road_trip.arrival_temp)
+    self.assertIsInstance(road_trip.arrival_conditions, str)
