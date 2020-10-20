@@ -1,5 +1,7 @@
-from api.services.location_service import get_directions
 from datetime import datetime
+from api.services.location_service import get_directions, get_latlng
+from api.services.weather_service import get_forecast
+
 
 
 def _road_trip_payload(road_trip):
@@ -11,10 +13,7 @@ def _road_trip_payload(road_trip):
               "start_city": None,
               "end_city": None,
               "travel_time": None,
-              "weather_at_eta": {
-                  "temperature": None,
-                  "conditions": None
-              }
+              "weather_at_eta": None
           }
       }
   }
@@ -29,11 +28,47 @@ class RoadTripCreator:
   def get_travel_time(self):
     travel_time = self.directions['route']['formattedTime']
     travel_object = datetime.strptime(travel_time, '%H:%M:%S')
-    new_string = travel_object.strftime('%-H hours %-M minutes')
-    return new_string
+
+    if travel_object.hour == 0:
+      new_string = travel_object.strftime('%-M minutes')
+    else:
+      new_string = travel_object.strftime('%-H hours, %-M minutes')
+
+    return new_string, travel_object
   
-  # def get_weather_at_eta(self):
-  #   ''
+  def get_weather_at_eta(self):
+    payload = {
+      'temperature': None,
+      'conditions': None
+    }
+    # Get travel time in hours and minutes
+    travel_time = self.get_travel_time()[1]
+
+    # Get lat and lng for end location
+    city, state = self.end_location.split(',')
+    latlng = get_latlng(city, state)
+
+    # Get weather for end location, specifically hourly
+    forecast = get_forecast(latlng['lat'], latlng['lng']).json()
+
+    # Find total travel time in travel_time variable
+    hours = travel_time.hour
+    minutes = travel_time.minute / 60
+    added = hours + minutes
+    rounded = round(added)
+
+    # Add travel time hours to hourly weather forecast
+
+    # Pull temperature and conditions from specified hourly forecast
+    destination_forecast = forecast['hourly'][rounded + 1]
+
+    # add data to payload
+    payload['temperature'] = destination_forecast['temp']
+    payload['conditions'] = destination_forecast['weather'][0]['description'] 
+
+    return payload
+
+
 
   # def create_road_trip(self):
   #   ''
