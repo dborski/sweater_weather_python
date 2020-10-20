@@ -141,3 +141,17 @@ class UserLoginTest(TestCase):
     self.assertEqual(json_response['success'], False)
     self.assertEqual(json_response['error'], 400)
     self.assertEqual(json_response['errors'], 'Credentials are incorrect')
+
+  def test_sad_path_logs_in_a_user_password_incorrect(self):
+    body = {
+      'username': 'currentuser2@email.com',
+      'password': 'pasword2d'
+    }
+    response = self.client.post('/api/v1/sessions', body)
+
+    json_response = response.json()
+
+    self.assertEqual(response.status_code, 400)
+    self.assertEqual(json_response['success'], False)
+    self.assertEqual(json_response['error'], 400)
+    self.assertEqual(json_response['errors'], 'Credentials are incorrect')
