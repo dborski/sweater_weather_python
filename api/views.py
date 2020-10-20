@@ -14,9 +14,10 @@ from api.popos.forecast_parser import ForecastParser
 from api.popos.photo_parser import PhotoParser
 
 
-def _registration_success(body):
+def _registration_success(body, errors):
     try:
       user_check = User.objects.get(email=body['email'])
+      errors.append("This email already exists")
       return False
     except ObjectDoesNotExist:
       ''
@@ -24,6 +25,7 @@ def _registration_success(body):
     if body['password'] == body['password_confirmation']:
       return True
     else:
+      errors.append("The passwords do not match")
       return False
 
 def _user_payload(user):
@@ -82,10 +84,15 @@ class BackgroundView(APIView):
 class UserRegistrationView(APIView):
   def post(self, request):
     body = request.POST
+    errors = []
 
-    if _registration_success(body):
+    if _registration_success(body, errors):
       new_user = User.objects.create_user(body['email'], body['email'], body['password'])
       new_user.api_key = str(uuid.uuid4())
       return JsonResponse(_user_payload(new_user), status=201)
     else:
-      return 'Errors'
+      return JsonResponse({
+          'success': False,
+          'error': 400,
+          'errors': errors[0]
+      }, status=400)
