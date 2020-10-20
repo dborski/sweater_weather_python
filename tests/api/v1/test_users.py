@@ -3,8 +3,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 
-
-class UserTest(TestCase):
+class UserRegistrationTest(TestCase):
   def setUp(self):
     self.user1 = User.objects.create_user(
       username='currentuser@email.com',
@@ -100,3 +99,85 @@ class UserTest(TestCase):
     self.assertEqual(json_response['error'], 400)
     self.assertEqual(json_response['errors'], 'Missing password confirmation')
 
+class UserLoginTest(TestCase):
+  def setUp(self):
+    self.user1 = User.objects.create_user(
+        username='currentuser1@email.com',
+        email='currentuser1@email.com',
+        password='password1'
+    )
+
+    self.user2 = User.objects.create_user(
+        username='currentuser2@email.com',
+        email='currentuser2@email.com',
+        password='password2'
+    )
+  
+  def test_happy_path_logs_in_a_user(self):
+    body = {
+      'username': 'currentuser2@email.com',
+      'password': 'password2'
+    }
+    response = self.client.post('/api/v1/sessions', body)
+
+    json_response = response.json()
+
+    self.assertEqual(response.status_code, 200)
+    self.assertEqual(json_response['data']['type'], 'users')
+    self.assertEqual(json_response['data']['id'], self.user2.id)
+    self.assertEqual(json_response['data']['attributes']['email'], self.user2.email)
+    self.assertEqual(json_response['data']['attributes']['api_key'], self.user2.profile.api_key)
+
+  def test_sad_path_logs_in_a_user_email_incorrect(self):
+    body = {
+      'username': 'currentuser332@email.com',
+      'password': 'password2'
+    }
+    response = self.client.post('/api/v1/sessions', body)
+
+    json_response = response.json()
+
+    self.assertEqual(response.status_code, 401)
+    self.assertEqual(json_response['success'], False)
+    self.assertEqual(json_response['error'], 401)
+    self.assertEqual(json_response['errors'], 'Credentials are incorrect')
+
+  def test_sad_path_logs_in_a_user_password_incorrect(self):
+    body = {
+      'username': 'currentuser2@email.com',
+      'password': 'pasword2d'
+    }
+    response = self.client.post('/api/v1/sessions', body)
+
+    json_response = response.json()
+
+    self.assertEqual(response.status_code, 401)
+    self.assertEqual(json_response['success'], False)
+    self.assertEqual(json_response['error'], 401)
+    self.assertEqual(json_response['errors'], 'Credentials are incorrect')
+
+  def test_sad_path_logs_in_a_user_password_incorrect(self):
+    body = {
+      'password': 'pasword2'
+    }
+    response = self.client.post('/api/v1/sessions', body)
+
+    json_response = response.json()
+
+    self.assertEqual(response.status_code, 401)
+    self.assertEqual(json_response['success'], False)
+    self.assertEqual(json_response['error'], 401)
+    self.assertEqual(json_response['errors'], 'Credentials are incorrect')
+    
+  def test_sad_path_logs_in_a_user_password_incorrect(self):
+    body = {
+      'username': 'currentuser2@email.com'
+    }
+    response = self.client.post('/api/v1/sessions', body)
+
+    json_response = response.json()
+
+    self.assertEqual(response.status_code, 401)
+    self.assertEqual(json_response['success'], False)
+    self.assertEqual(json_response['error'], 401)
+    self.assertEqual(json_response['errors'], 'Credentials are incorrect')

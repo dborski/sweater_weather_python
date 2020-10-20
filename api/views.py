@@ -2,9 +2,9 @@ import json
 from django.http import JsonResponse
 from django.http import HttpResponse
 from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import authenticate, login
 import uuid
 
 from api.services.location_service import get_latlng
@@ -46,6 +46,18 @@ def _registration_success(body, errors):
       errors.append("The passwords do not match")
       return False
 
+def _login_success(request, body, user):
+  if 'username' and 'password' in body:
+    found_user = authenticate(request, username=body['username'], password=body['password'])
+    if found_user is not None:
+      user.append(found_user)
+      login(request, found_user)
+      return True
+    else:
+      return False
+  else:
+    False
+
 def _user_payload(user):
   return {
       "data": {
@@ -58,10 +70,10 @@ def _user_payload(user):
       }
   }
 
-def _error_payload(error):
+def _error_payload(error, code=400):
   return {
       'success': False,
-      'error': 400,
+      'error': code,
       'errors': error
   }
 
@@ -110,3 +122,14 @@ class UserRegistrationView(APIView):
       return JsonResponse(_user_payload(new_user), status=201)
     else:
       return JsonResponse(_error_payload(errors[0]), status=400)
+
+class UserLoginView(APIView):
+  def post(self, request):
+    body = request.data
+    user = []
+
+    if _login_success(request, body, user):
+      return JsonResponse(_user_payload(user[0]), status=200)
+    else:
+      error = 'Credentials are incorrect'
+      return JsonResponse(_error_payload(error, 401), status=401)
