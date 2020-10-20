@@ -80,7 +80,7 @@ class ForecastView(APIView):
       forecast_payload = ForecastParser(forecast).get_forecast_payload()
       return JsonResponse(forecast_payload)
     else:
-      error = "Must supply city and state ex. /forecast?location=denver,co"
+      error = "Must include city and state ex. /forecast?location=denver,co"
       return JsonResponse(_error_payload(error), status=400)
   
 
@@ -93,7 +93,7 @@ class BackgroundView(APIView):
       background_payload = PhotoParser(photo_data, location).get_photo_payload()
       return JsonResponse(background_payload)
     else:
-      error = "Must search query param /backgrounds?location=denver,co"
+      error = "Must include search query param /backgrounds?location=denver,co"
       return JsonResponse(_error_payload(error), status=400)
 
 class UserRegistrationView(APIView):

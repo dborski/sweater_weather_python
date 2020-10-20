@@ -20,7 +20,7 @@ class GetForecastTest(TestCase):
     self.assertEqual(response.status_code, 400)
     self.assertEqual(json_response['success'], False)
     self.assertEqual(json_response['error'], 400)
-    self.assertEqual(json_response['errors'], 'Must supply city and state ex. /forecast?location=denver,co')
+    self.assertEqual(json_response['errors'], 'Must include city and state ex. /forecast?location=denver,co')
 
   def test_sad_path_get_weather_no_city(self):
     response = self.client.get('/api/v1/forecast?location=ca')
@@ -30,4 +30,4 @@ class GetForecastTest(TestCase):
     self.assertEqual(response.status_code, 400)
     self.assertEqual(json_response['success'], False)
     self.assertEqual(json_response['error'], 400)
-    self.assertEqual(json_response['errors'], 'Must supply city and state ex. /forecast?location=denver,co')
+    self.assertEqual(json_response['errors'], 'Must include city and state ex. /forecast?location=denver,co')

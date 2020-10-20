@@ -25,5 +25,5 @@ class GetBackgroundImageTest(TestCase):
     self.assertEqual(response.status_code, 400)
     self.assertEqual(json_response['success'], False)
     self.assertEqual(json_response['error'], 400)
-    self.assertEqual(json_response['errors'], 'Must search query param /backgrounds?location=denver,co')
+    self.assertEqual(json_response['errors'], 'Must include search query param /backgrounds?location=denver,co')
 
