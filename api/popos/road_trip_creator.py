@@ -1,4 +1,5 @@
 from datetime import datetime
+from api.models import RoadTrip
 from api.services.location_service import get_directions, get_latlng
 from api.services.weather_service import get_forecast
 
@@ -10,9 +11,26 @@ def _road_trip_payload(road_trip):
           "id": None,
           "type": "roadtrip",
           "attributes": {
-              "start_city": None,
-              "end_city": None,
-              "travel_time": None,
+              "start_city": road_trip.start_city,
+              "end_city": road_trip.end_city,
+              "travel_time": road_trip.travel_time,
+              "weather_at_eta": {
+                  'temperature': road_trip.arrival_temp,
+                  'conditions': road_trip.arrival_conditions
+              }
+          }
+      }
+  }
+
+def _error_payload(start_location, end_location):
+  return {
+      "data": {
+          "id": None,
+          "type": "roadtrip",
+          "attributes": {
+              "start_city": start_location,
+              "end_city": end_location,
+              "travel_time": 'Impossible',
               "weather_at_eta": None
           }
       }
@@ -68,7 +86,7 @@ class RoadTripCreator:
 
       # Add travel time hours to hourly weather forecast
       # Pull temperature and conditions from specified hourly forecast
-      destination_forecast = forecast['hourly'][rounded + 1]
+      destination_forecast = forecast['hourly'][rounded]
 
       # add data to payload
       payload['temperature'] = destination_forecast['temp']
@@ -76,10 +94,25 @@ class RoadTripCreator:
 
       return payload
 
+  def name_creator(self):
+    return f'Road trip from {self.start_location} to {self.end_location}'
 
+  def create_road_trip(self):
+    travel_time = self.get_travel_time()
+    weather = self.get_weather_at_eta()
 
-  # def create_road_trip(self):
-  #   ''
-  
-  # def get_road_trip_payload(self):
-  #   ''
+    if travel_time != 'Impossible':
+      new_trip = RoadTrip.objects.create(
+        user=self.user,
+        name=self.name_creator(),
+        start_city=self.start_location,
+        end_city=self.end_location,
+        travel_time=travel_time[0],
+        arrival_temp=weather['temperature'],
+        arrival_conditions=weather['conditions']
+      )
+      return _road_trip_payload(new_trip)
+    else:
+      return _error_payload(self.start_location, self.end_location)
+    
+
