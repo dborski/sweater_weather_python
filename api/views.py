@@ -15,6 +15,24 @@ from api.popos.photo_parser import PhotoParser
 
 
 def _registration_success(body, errors):
+    if 'email' in body:
+      pass
+    else:
+      errors.append("Missing email")
+      return False
+    
+    if 'password' in body:
+      pass
+    else:
+      errors.append("Missing password")
+      return False
+
+    if 'password_confirmation' in body:
+      pass
+    else:
+      errors.append("Missing password confirmation")
+      return False
+
     try:
       user_check = User.objects.get(email=body['email'])
       errors.append("This email already exists")
