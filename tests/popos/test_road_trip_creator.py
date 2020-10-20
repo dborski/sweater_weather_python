@@ -24,4 +24,5 @@ class RoadTripCreatorTest(TestCase):
     self.assertIsNotNone(self.creator.directions)
     self.assertEqual(self.creator.user, self.user1)
 
-
+  def test_get_travel_time(self):
+    self.assertIsInstance(self.creator.get_travel_time(), str)
