@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/forecast', views.ForecastView.as_view()),
     path('api/v1/backgrounds', views.BackgroundView.as_view()),
+    path('api/v1/users', views.UserRegistrationView.as_view()),
 ]
