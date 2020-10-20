@@ -40,14 +40,15 @@ def _user_payload(user):
       }
   }
 
+def _error_payload(error):
+  return {
+      'success': False,
+      'error': 400,
+      'errors': error
+  }
+
 class ForecastView(APIView):
   def get(self, request):
-    error_payload = {
-        'success': False,
-        'error': 400,
-        'errors': "Must supply city and state ex. /forecast?location=denver,co"
-    }
-
     location = request.GET['location']
 
     if location:
@@ -61,17 +62,12 @@ class ForecastView(APIView):
       forecast_payload = ForecastParser(forecast).get_forecast_payload()
       return JsonResponse(forecast_payload)
     else:
-      return JsonResponse(error_payload, status=400)
+      error = "Must supply city and state ex. /forecast?location=denver,co"
+      return JsonResponse(_error_payload(error), status=400)
   
 
 class BackgroundView(APIView):
   def get(self, request):
-    error_payload = {
-          'success': False,
-          'error': 400,
-          'errors': "Must search query param /backgrounds?location=denver,co"
-    }
-
     if request.GET:
       location = request.GET['location']
       city = location.split(",")[0]
@@ -79,7 +75,8 @@ class BackgroundView(APIView):
       background_payload = PhotoParser(photo_data, location).get_photo_payload()
       return JsonResponse(background_payload)
     else:
-      return JsonResponse(error_payload, status=400)
+      error = "Must search query param /backgrounds?location=denver,co"
+      return JsonResponse(_error_payload(error), status=400)
 
 class UserRegistrationView(APIView):
   def post(self, request):
@@ -91,8 +88,4 @@ class UserRegistrationView(APIView):
       new_user.api_key = str(uuid.uuid4())
       return JsonResponse(_user_payload(new_user), status=201)
     else:
-      return JsonResponse({
-          'success': False,
-          'error': 400,
-          'errors': errors[0]
-      }, status=400)
+      return JsonResponse(_error_payload(errors[0]), status=400)
