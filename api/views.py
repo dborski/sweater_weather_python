@@ -7,11 +7,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 import uuid
 
-from api.services.location_service import get_latlng
+from api.services.location_service import get_latlng, get_directions
 from api.services.weather_service import get_forecast
 from api.services.photo_service import get_single_photo_by_keyword
 from api.popos.forecast_parser import ForecastParser
 from api.popos.photo_parser import PhotoParser
+from api.popos.road_trip_creator import RoadTripCreator
 
 
 def _registration_success(body, errors):
@@ -140,8 +141,10 @@ class RoadTripView(APIView):
     # Find the user that has the api key in the request body
     user = User.objects.get(profile__api_key=body['api_key'])
 
+    directions = get_directions(body['origin'], body['destination'])
+
     # Call a new class called RoadTripCreator that handles the creation
-    # RoadTripCreator(body, user)
+    # forecast_payload = RoadTripCreator(directions, user).get_road_trip_payload()
 
     # Before road trip creator:
     # Need to create road trip model with following attributes:
@@ -164,4 +167,5 @@ class RoadTripView(APIView):
     # Need to create a new road trip in db for specified user with all attributes
 
 
-    return 'hello'
+    # return JsonResponse(forecast_payload)
+    return ''
