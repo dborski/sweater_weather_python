@@ -120,5 +120,6 @@ class UserLoginView(APIView):
     if user is not None:
       login(request, user)
       return JsonResponse(_user_payload(user), status=200)
-    else: 
-      return 'Credentials are incorrect'
+    else:
+      error = 'Credentials are incorrect'
+      return JsonResponse(_error_payload(error), status=400)
