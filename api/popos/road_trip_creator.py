@@ -26,15 +26,18 @@ class RoadTripCreator:
     self.user = user
 
   def get_travel_time(self):
-    travel_time = self.directions['route']['formattedTime']
-    travel_object = datetime.strptime(travel_time, '%H:%M:%S')
-
-    if travel_object.hour == 0:
-      new_string = travel_object.strftime('%-M minutes')
+    if self.directions['route']['routeError']['errorCode'] == 2:
+      return 'Impossible'
     else:
-      new_string = travel_object.strftime('%-H hours, %-M minutes')
+      travel_time = self.directions['route']['formattedTime']
+      travel_object = datetime.strptime(travel_time, '%H:%M:%S')
 
-    return new_string, travel_object
+      if travel_object.hour == 0:
+        new_string = travel_object.strftime('%-M minutes')
+      else:
+        new_string = travel_object.strftime('%-H hours, %-M minutes')
+
+      return new_string, travel_object
   
   def get_weather_at_eta(self):
     payload = {
@@ -42,31 +45,36 @@ class RoadTripCreator:
       'conditions': None
     }
     # Get travel time in hours and minutes
-    travel_time = self.get_travel_time()[1]
+    travel_time = self.get_travel_time()
+    
+    if travel_time == 'Impossible':
+      payload['temperature'] = 'Impossible'
+      payload['conditions'] = 'Impossible'
+      return payload
+    else:
+      # Get lat and lng for end location
+      travel_time = travel_time[1]
+      city, state = self.end_location.split(',')
+      latlng = get_latlng(city, state)
 
-    # Get lat and lng for end location
-    city, state = self.end_location.split(',')
-    latlng = get_latlng(city, state)
+      # Get weather for end location, specifically hourly
+      forecast = get_forecast(latlng['lat'], latlng['lng']).json()
 
-    # Get weather for end location, specifically hourly
-    forecast = get_forecast(latlng['lat'], latlng['lng']).json()
+      # Find total travel time in travel_time variable
+      hours = travel_time.hour
+      minutes = (travel_time.minute / 60)
+      added = hours + minutes
+      rounded = round(added)
 
-    # Find total travel time in travel_time variable
-    hours = travel_time.hour
-    minutes = travel_time.minute / 60
-    added = hours + minutes
-    rounded = round(added)
+      # Add travel time hours to hourly weather forecast
+      # Pull temperature and conditions from specified hourly forecast
+      destination_forecast = forecast['hourly'][rounded + 1]
 
-    # Add travel time hours to hourly weather forecast
+      # add data to payload
+      payload['temperature'] = destination_forecast['temp']
+      payload['conditions'] = destination_forecast['weather'][0]['description'] 
 
-    # Pull temperature and conditions from specified hourly forecast
-    destination_forecast = forecast['hourly'][rounded + 1]
-
-    # add data to payload
-    payload['temperature'] = destination_forecast['temp']
-    payload['conditions'] = destination_forecast['weather'][0]['description'] 
-
-    return payload
+      return payload
 
 
 
