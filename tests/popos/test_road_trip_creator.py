@@ -25,4 +25,8 @@ class RoadTripCreatorTest(TestCase):
     self.assertEqual(self.creator.user, self.user1)
 
   def test_get_travel_time(self):
-    self.assertIsInstance(self.creator.get_travel_time(), str)
+    self.assertIsInstance(self.creator.get_travel_time()[0], str)
+
+  def test_get_weather_at_eta(self):
+    self.assertIsInstance(self.creator.get_weather_at_eta()['temperature'], float)
+    self.assertIsInstance(self.creator.get_weather_at_eta()['conditions'], str)
