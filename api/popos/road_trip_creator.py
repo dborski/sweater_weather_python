@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from api.models import RoadTrip
 from api.services.location_service import get_directions, get_latlng
 from api.services.weather_service import get_forecast
@@ -48,14 +48,14 @@ class RoadTripCreator:
       return 'Impossible'
     else:
       travel_time = self.directions['route']['formattedTime']
-      travel_object = datetime.strptime(travel_time, '%y:%M:%S')
+      hours, minutes, seconds = travel_time.split(':')
 
-      if travel_object.year == 0:
-        new_string = travel_object.strftime('%-M minutes')
+      if hours == '00':
+        new_string = f'{minutes} minutes'
       else:
-        new_string = travel_object.strftime('%y hours, %-M minutes')
+        new_string = f'{hours} hours, {minutes} minutes'
 
-      return new_string, travel_object
+      return new_string, travel_time
   
   def get_weather_at_eta(self):
     payload = {
@@ -69,7 +69,6 @@ class RoadTripCreator:
       return None
     else:
       # Get lat and lng for end location
-      travel_time = travel_time[1]
       city, state = self.end_location.split(',')
       latlng = get_latlng(city, state)
 
@@ -77,9 +76,11 @@ class RoadTripCreator:
       forecast = get_forecast(latlng['lat'], latlng['lng']).json()
 
       # Find total travel time in travel_time variable
-      hours = travel_time.hour
-      minutes = (travel_time.minute / 60)
-      rounded = round(hours + minutes)
+      travel_time = travel_time[1]
+      hours, minutes, seconds = travel_time.split(':')
+      # hours = travel_time.hour
+      decimal_minutes = (float(minutes) / 60)
+      rounded = round(float(hours) + decimal_minutes)
 
       # Add travel time hours to hourly weather forecast
       # Pull temperature and conditions from specified hourly forecast
