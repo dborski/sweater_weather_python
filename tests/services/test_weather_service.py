@@ -20,8 +20,8 @@ class WeatherService(TestCase):
     self.assertIsNotNone(self.results['current']['feels_like'])
     self.assertIsInstance(self.results['current']['pressure'], int)
     self.assertIsInstance(self.results['current']['humidity'], int)
-    self.assertIsInstance(self.results['current']['dew_point'], float)
-    self.assertIsInstance(self.results['current']['uvi'], float)
+    self.assertIsNotNone(self.results['current']['dew_point'])
+    self.assertIsNotNone(self.results['current']['uvi'])
     self.assertIsInstance(self.results['current']['clouds'], int)
     self.assertIsInstance(self.results['current']['visibility'], int)
     self.assertIsNotNone(self.results['current']['wind_speed'])
@@ -37,7 +37,7 @@ class WeatherService(TestCase):
     self.assertIsNotNone(self.results['hourly'][0]['feels_like'])
     self.assertIsInstance(self.results['hourly'][0]['pressure'], int)
     self.assertIsInstance(self.results['hourly'][0]['humidity'], int)
-    self.assertIsInstance(self.results['hourly'][0]['dew_point'], float)
+    self.assertIsNotNone(self.results['hourly'][0]['dew_point'])
     self.assertIsInstance(self.results['hourly'][0]['clouds'], int)
     self.assertIsInstance(self.results['hourly'][0]['visibility'], int)
     self.assertIsNotNone(self.results['hourly'][0]['wind_speed'])
@@ -63,6 +63,6 @@ class WeatherService(TestCase):
     self.assertIsNotNone(self.results['daily'][0]['weather'][0]['description'])
     self.assertIsNotNone(self.results['daily'][0]['weather'][0]['icon'])
     self.assertIsInstance(self.results['daily'][0]['clouds'], int)
-    self.assertIsInstance(self.results['daily'][0]['uvi'], float)
+    self.assertIsNotNone(self.results['daily'][0]['uvi'])
 
 
