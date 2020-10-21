@@ -7,11 +7,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 import uuid
 
-from api.services.location_service import get_latlng
+from api.services.location_service import get_latlng, get_directions
 from api.services.weather_service import get_forecast
 from api.services.photo_service import get_single_photo_by_keyword
 from api.popos.forecast_parser import ForecastParser
 from api.popos.photo_parser import PhotoParser
+from api.popos.road_trip_creator import RoadTripCreator
 
 
 def _registration_success(body, errors):
@@ -133,3 +134,39 @@ class UserLoginView(APIView):
     else:
       error = 'Credentials are incorrect'
       return JsonResponse(_error_payload(error, 401), status=401)
+
+class RoadTripView(APIView):
+  def post(self, request):
+    body = request.data
+    errors = []
+    user = []
+
+    if _road_trip_requirements_met(body, errors, user):
+      trip_payload = RoadTripCreator(body['origin'], body['destination'], user[0]).create_road_trip()
+      return JsonResponse(trip_payload, status=201)
+    else:
+      return JsonResponse(_error_payload(errors[0]))
+
+def _road_trip_requirements_met(body, errors, user):
+    if 'api_key' in body:
+      pass
+    else:
+      errors.append("Must include API key")
+      return False
+    if 'origin' in body:
+      pass
+    else:
+      errors.append("Must include origin")
+      return False
+    if 'destination' in body:
+      pass
+    else:
+      errors.append("Must include destination")
+      return False
+
+    try:
+      user.append(User.objects.get(profile__api_key=body['api_key']))
+      return True
+    except ObjectDoesNotExist:
+      errors.append("This email already exists")
+      return False
