@@ -48,12 +48,12 @@ class RoadTripCreator:
       return 'Impossible'
     else:
       travel_time = self.directions['route']['formattedTime']
-      travel_object = datetime.strptime(travel_time, '%H:%M:%S')
+      travel_object = datetime.strptime(travel_time, '%y:%M:%S')
 
-      if travel_object.hour == 0:
+      if travel_object.year == 0:
         new_string = travel_object.strftime('%-M minutes')
       else:
-        new_string = travel_object.strftime('%-H hours, %-M minutes')
+        new_string = travel_object.strftime('%y hours, %-M minutes')
 
       return new_string, travel_object
   
@@ -66,9 +66,7 @@ class RoadTripCreator:
     travel_time = self.get_travel_time()
     
     if travel_time == 'Impossible':
-      payload['temperature'] = 'Impossible'
-      payload['conditions'] = 'Impossible'
-      return payload
+      return None
     else:
       # Get lat and lng for end location
       travel_time = travel_time[1]
@@ -81,8 +79,7 @@ class RoadTripCreator:
       # Find total travel time in travel_time variable
       hours = travel_time.hour
       minutes = (travel_time.minute / 60)
-      added = hours + minutes
-      rounded = round(added)
+      rounded = round(hours + minutes)
 
       # Add travel time hours to hourly weather forecast
       # Pull temperature and conditions from specified hourly forecast
