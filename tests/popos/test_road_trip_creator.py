@@ -38,8 +38,7 @@ class RoadTripCreatorTest(TestCase):
     self.assertIsInstance(self.creator.get_weather_at_eta()['conditions'], str)
 
   def test_sad_path_get_weather_at_eta_that_is_impossible(self):
-    self.assertEqual(self.creator_bad.get_weather_at_eta()['temperature'], 'Impossible')
-    self.assertEqual(self.creator_bad.get_weather_at_eta()['conditions'], 'Impossible')
+    self.assertIsNone(self.creator_bad.get_weather_at_eta())
 
   def test_happy_path_create_road_trip(self):
     self.creator.create_road_trip()

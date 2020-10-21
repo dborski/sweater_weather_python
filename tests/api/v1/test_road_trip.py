@@ -22,7 +22,6 @@ class GetRoadTripTest(TestCase):
 
     self.assertEqual(response.status_code, 201)
     self.assertIsNone(json_response['data']['id'])
-    self.assertEqual(json_response['data']['id'], 'roadtrip')
     self.assertEqual(json_response['data']['attributes']['start_city'], body['origin'])
     self.assertEqual(json_response['data']['attributes']['end_city'], body['destination'])
     self.assertIsNotNone(json_response['data']['attributes']['travel_time'])
