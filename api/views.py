@@ -138,35 +138,35 @@ class UserLoginView(APIView):
 class RoadTripView(APIView):
   def post(self, request):
     body = request.data
-    # Find the user that has the api key in the request body
-    user = User.objects.get(profile__api_key=body['api_key'])
+    errors = []
+    user = []
 
-    # directions = get_directions(body['origin'], body['destination'])
+    if _road_trip_requirements_met(body, errors, user):
+      trip_payload = RoadTripCreator(body['origin'], body['destination'], user[0]).create_road_trip()
+      return JsonResponse(trip_payload, status=201)
+    else:
+      return JsonResponse(_error_payload(errors[0]))
 
-    # Call a new class called RoadTripCreator that handles the creation
-    trip_payload = RoadTripCreator(body['origin'], body['destination'], user).create_road_trip()
+def _road_trip_requirements_met(body, errors, user):
+    if 'api_key' in body:
+      pass
+    else:
+      errors.append("Must include API key")
+      return False
+    if 'origin' in body:
+      pass
+    else:
+      errors.append("Must include origin")
+      return False
+    if 'destination' in body:
+      pass
+    else:
+      errors.append("Must include destination")
+      return False
 
-    return JsonResponse(trip_payload, status=201)
-    # Before road trip creator:
-    # Need to create road trip model with following attributes:
-    # Needs to be attached to user model one-to-many
-    # ---start_city
-    # ---end_city
-    # ---travel_time
-    # ---arrival_temp
-    # ---arrival conditions
-    # ***Would be nice to have arrival info update each time road trip is called from db
-
-    # Location Service
-    # Need to add interface with directions api to pull directions info
-    # Need distance
-    # Need travel time
-
-    # Road trip creator
-    # Need to pull distance and travel time from location_service
-    # Need to calculate weather at destination based on travel time
-    # Need to create a new road trip in db for specified user with all attributes
-
-
-    # return JsonResponse(forecast_payload)
-    
+    try:
+      user.append(User.objects.get(profile__api_key=body['api_key']))
+      return True
+    except ObjectDoesNotExist:
+      errors.append("This email already exists")
+      return False

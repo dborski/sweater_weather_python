@@ -82,6 +82,9 @@ class RoadTripCreator:
       decimal_minutes = (float(minutes) / 60)
       rounded = round(float(hours) + decimal_minutes)
 
+      if rounded > 47:
+        return None
+
       # Add travel time hours to hourly weather forecast
       # Pull temperature and conditions from specified hourly forecast
       destination_forecast = forecast['hourly'][rounded]
@@ -99,7 +102,7 @@ class RoadTripCreator:
     travel_time = self.get_travel_time()
     weather = self.get_weather_at_eta()
 
-    if travel_time != 'Impossible':
+    if travel_time != 'Impossible' or weather is not None:
       new_trip = RoadTrip.objects.create(
         user=self.user,
         name=self.name_creator(),
