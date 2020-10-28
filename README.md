@@ -153,4 +153,21 @@ api/v1/road_trip
 ```
 
 Calculates the travel time and weather upon arrival for a road trip and saves the road trip in the database for the user.
+```
+{
+    "data": {
+        "id": null,
+        "type": "roadtrip",
+        "attributes": {
+            "start_city": "Denver,CO",
+            "end_city": "Las Vegas, NV",
+            "travel_time": "10 hours, 31 minutes",
+            "weather_at_eta": {
+                "temperature": 44.28,
+                "conditions": "clear sky"
+            }
+        }
+    }
+}
+```
 
