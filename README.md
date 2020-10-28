@@ -113,6 +113,18 @@ api/v1/users
 ```
 
 Registers a new user for the site and generates a unique API key as credentials
+```
+{
+    "data": {
+        "type": "users",
+        "id": 6,
+        "attributes": {
+            "email": "new_user6@email.com",
+            "api_key": "bf97fdcb-b6f5-4dd2-89d2-3dd1cfcb742b"
+        }
+    }
+}
+```
 
 #### User Login
 
@@ -121,6 +133,18 @@ api/v1/sessions
 ```
 
 Logs a user into the site only if the user has the correct API key
+```
+{
+    "data": {
+        "type": "users",
+        "id": 5,
+        "attributes": {
+            "email": "new_user5@email.com",
+            "api_key": "33c896e5-a625-41d5-bd2b-633670d6d817"
+        }
+    }
+}
+```
 
 #### Create Road Trip
 
