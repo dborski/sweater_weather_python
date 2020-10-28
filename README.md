@@ -88,6 +88,23 @@ api/v1/backgrounds?location=<city>,<state>
 ```
 
 Finds a relevant image for the city and state of the desired location
+```
+{
+    "data": {
+        "type": "image",
+        "id": null,
+        "image": {
+            "location": "denver,co",
+            "image_url": "https://images.unsplash.com/photo-1546156929-a4c0ac411f47?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjE1MzI5N30",
+            "credit": {
+                "source": "unsplash.com",
+                "author": "theadventurebitch",
+                "logo": "https://unsplash-assets.imgix.net/marketing/press-logotype.svg?auto=format&fit=crop&q=60"
+            }
+        }
+    }
+}
+```
 
 #### User Registration
 
