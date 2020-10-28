@@ -14,7 +14,7 @@ API Services Used:
 #### Forecast
 
 ```
-api/v1/forecast?location=<city>,<state>
+GET /api/v1/forecast?location=<city>,<state>
 ```
 
 Displays the current, hourly, and daily forecast for the desired location
@@ -84,7 +84,7 @@ Displays the current, hourly, and daily forecast for the desired location
 #### City Background
 
 ```
-api/v1/backgrounds?location=<city>,<state>
+GET /api/v1/backgrounds?location=<city>,<state>
 ```
 
 Finds a relevant image for the city and state of the desired location
@@ -109,10 +109,24 @@ Finds a relevant image for the city and state of the desired location
 #### User Registration
 
 ```
-api/v1/users
+POST /api/v1/users
 ```
+Description:
+- Registers a new user for the site and generates a unique API key as credentials
+- Returns a 201 status code on success
 
-Registers a new user for the site and generates a unique API key as credentials
+Required Request Body:
+- JSON payload of:
+  - email: required, must be unique, cannot be blank
+  - password: Required, must match password_confirmation
+```
+{
+    "email": "new_user6@email.com",
+    "password": "password",
+    "password_confirmation": "password"
+}
+```
+Response Body:
 ```
 {
     "data": {
@@ -129,11 +143,24 @@ Registers a new user for the site and generates a unique API key as credentials
 #### User Login
 
 ```
-api/v1/sessions
+POST /api/v1/sessions
 ```
+Description:
+- Logs a user into the site only if the user has the correct API key
+- Returns a 201 status code on success
 
-Logs a user into the site only if the user has the correct API key
+Required Request Body:
+- JSON payload of:
+  - username: Required
+  - password: Required, must be correct password
 ```
+{
+    "username": "new_user6@email.com",
+    "password": "password"
+}
+
+```
+Response Body:
 {
     "data": {
         "type": "users",
@@ -149,7 +176,7 @@ Logs a user into the site only if the user has the correct API key
 #### Create Road Trip
 
 ```
-api/v1/road_trip
+POST /api/v1/road_trip
 ```
 
 Calculates the travel time and weather upon arrival for a road trip and saves the road trip in the database for the user.
