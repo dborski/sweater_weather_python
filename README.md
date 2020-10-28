@@ -18,6 +18,68 @@ api/v1/forecast?location=<city>,<state>
 ```
 
 Displays the current, hourly, and daily forecast for the desired location
+```
+{
+    "data": {
+        "id": null,
+        "type": "forecast",
+        "attributes": {
+            "current_weather": {
+                "datetime": "2020-10-26 12:13:15 -0753",
+                "sunrise": "2020-10-26 06:58:01 -0753",
+                "sunset": "2020-10-26 17:50:40 -0753",
+                "temperature": 49.62,
+                "feels_like": 30.24,
+                "humidity": 11,
+                "uvi": 3.72,
+                "visibility": 10000,
+                "conditions": "clear sky",
+                "icon": "01d"
+            },
+            "daily_weather": [
+                {
+                    "date": "2020-10-26",
+                    "sunrise": "2020-10-26 06:58:01 -0753",
+                    "sunset": "2020-10-26 17:50:40 -0753",
+                    "max_temp": 57.51,
+                    "min_temp": 39.16,
+                    "conditions": "clear sky",
+                    "icon": "01d"
+                },
+                {
+                    "date": "2020-10-27",
+                    "sunrise": "2020-10-27 06:58:59 -0753",
+                    "sunset": "2020-10-27 17:49:33 -0753",
+                    "max_temp": 66.85,
+                    "min_temp": 42.8,
+                    "conditions": "clear sky",
+                    "icon": "01d"
+                },
+                {...}
+            ],
+            "hourly_weather": [
+                {
+                    "time": "12:00:00",
+                    "temp": 49.62,
+                    "wind_speed": "21.63 mph",
+                    "wind_direction": "from N",
+                    "conditions": "clear sky",
+                    "icon": "01d"
+                },
+                {
+                    "time": "13:00:00",
+                    "temp": 52.27,
+                    "wind_speed": "20.96 mph",
+                    "wind_direction": "from N",
+                    "conditions": "clear sky",
+                    "icon": "01d"
+                },
+                {...}
+            ]
+        }
+    }
+}
+```
 
 #### City Background
 
