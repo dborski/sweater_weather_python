@@ -201,7 +201,7 @@ Required Request Body:
     "api_key": "33c896e5-a625-41d5-bd2b-633670d6d817"
 }
 ```
-
+Response Body:
 ```
 {
     "data": {
