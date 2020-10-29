@@ -11,7 +11,7 @@ API Services Used:
 
 ## API Endpoints
 
-#### Forecast
+### Forecast
 
 ```
 GET /api/v1/forecast?location=<city>,<state>
@@ -83,7 +83,7 @@ Description:
 }
 ```
 
-#### City Background
+### City Background
 
 ```
 GET /api/v1/backgrounds?location=<city>,<state>
@@ -111,7 +111,7 @@ Response Body:
 }
 ```
 
-#### User Registration
+### User Registration
 
 ```
 POST /api/v1/users
@@ -146,7 +146,7 @@ Response Body:
 }
 ```
 
-#### User Login
+### User Login
 
 ```
 POST /api/v1/sessions
@@ -180,7 +180,7 @@ Response Body:
 }
 ```
 
-#### Create Road Trip
+### Create Road Trip
 
 ```
 POST /api/v1/road_trip
