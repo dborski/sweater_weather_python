@@ -16,8 +16,10 @@ API Services Used:
 ```
 GET /api/v1/forecast?location=<city>,<state>
 ```
+Description:
+- Displays the current, hourly, and daily forecast for the desired location
+- Returns a 200 status code on success
 
-Displays the current, hourly, and daily forecast for the desired location
 ```
 {
     "data": {
@@ -86,8 +88,9 @@ Displays the current, hourly, and daily forecast for the desired location
 ```
 GET /api/v1/backgrounds?location=<city>,<state>
 ```
-
-Finds a relevant image for the city and state of the desired location
+Description:
+- Finds a relevant image for the city and state of the desired location
+- Returns a 200 status code on success
 ```
 {
     "data": {
@@ -117,7 +120,7 @@ Description:
 
 Required Request Body:
 - JSON payload of:
-  - email: required, must be unique, cannot be blank
+  - email: Required, must be unique, cannot be blank
   - password: Required, must match password_confirmation
 ```
 {
@@ -161,6 +164,7 @@ Required Request Body:
 
 ```
 Response Body:
+```
 {
     "data": {
         "type": "users",
