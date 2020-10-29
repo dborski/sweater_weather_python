@@ -91,6 +91,8 @@ GET /api/v1/backgrounds?location=<city>,<state>
 Description:
 - Finds a relevant image for the city and state of the desired location
 - Returns a 200 status code on success
+
+Response Body:
 ```
 {
     "data": {
@@ -121,7 +123,8 @@ Description:
 Required Request Body:
 - JSON payload of:
   - email: Required, must be unique, cannot be blank
-  - password: Required, must match password_confirmation
+  - password: Required
+  - password_confirmation: Required, must match password
 ```
 {
     "email": "new_user6@email.com",
@@ -182,8 +185,23 @@ Response Body:
 ```
 POST /api/v1/road_trip
 ```
+Description:
+- Calculates the travel time and weather upon arrival for a road trip and saves the road trip in the database for the user.
+- Returns a 201 status code on success
 
-Calculates the travel time and weather upon arrival for a road trip and saves the road trip in the database for the user.
+Required Request Body:
+- JSON payload of:
+  - origin: Required
+  - destination: Required
+  - api_key: Required, must be correct api key for user
+```
+{
+    "origin": "Denver,CO",
+    "destination": "Las Vegas, NV",
+    "api_key": "33c896e5-a625-41d5-bd2b-633670d6d817"
+}
+```
+
 ```
 {
     "data": {
