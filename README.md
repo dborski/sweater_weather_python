@@ -20,6 +20,7 @@ Description:
 - Displays the current, hourly, and daily forecast for the desired location
 - Returns a 200 status code on success
 
+Response Body:
 ```
 {
     "data": {
