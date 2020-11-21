@@ -2,12 +2,13 @@
 
 Sweater Weather is the backend of a service-oriented application that builds and exposes multiple API endpoints. The application allows the user to plan road trips and see the current weather as well as the forecasted weather at the destination.
 
-This was created by [Derek Borski](https://github.com/dborski)
-
 API Services Used:
 - OpenWeather
 - MapQuest
 - Unsplash
+
+## Contributors
+* [Derek Borski](https://github.com/dborski)
 
 ## API Endpoints
 
