@@ -187,7 +187,15 @@ Response Body:
 ```
 POST /api/v1/road_trip
 ```
+Description:
+- Calculates the travel time and weather upon arrival for a road trip and saves the road trip in the database for the user.
+- Returns a 201 status code on success
+
 Required Request Body:
+- JSON payload of:
+  - origin: Required
+  - destination: Required
+  - api_key: Required, must be correct api key for user
 ```
 {
     "origin": "Denver,CO",
