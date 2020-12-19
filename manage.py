@@ -6,6 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
+    print(os.environ)
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sweater_weather_python.settings.production')
     try:
         from django.core.management import execute_from_command_line
