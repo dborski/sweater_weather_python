@@ -1,1 +1,1 @@
-web: gunicorn sweather_weather_python.wsgi
+web: gunicorn sweater_weather_python.wsgi
