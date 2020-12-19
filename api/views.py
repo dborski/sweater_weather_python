@@ -39,7 +39,7 @@ def _registration_success(body, errors):
       errors.append("This email already exists")
       return False
     except ObjectDoesNotExist:
-      ''
+      pass
     
     if body['password'] == body['password_confirmation']:
       return True
