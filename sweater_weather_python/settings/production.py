@@ -2,7 +2,7 @@ from .base import *
 import dj_database_url
 import psycopg2
 
-DEBUG = False
+DEBUG = True
 
 DATABASES = {
     'default': {
