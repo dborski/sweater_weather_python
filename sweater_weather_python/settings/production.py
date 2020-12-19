@@ -18,5 +18,5 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
-# DATABASES['default'] = dj_database_url.config(
-#     conn_max_age=600, ssl_require=True)
+DATABASES['default'] = dj_database_url.config(
+    conn_max_age=600, ssl_require=True)
