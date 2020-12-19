@@ -1,0 +1,16 @@
+language: python
+python:
+- '3.8'
+install:
+- pip install -r requirements.txt
+services:
+- postgresql
+script:
+- "./manage.py test"
+deploy:
+  provider: heroku
+  api_key:
+    secure: 1L9D0oxJYsbQIzyDQ8hT0eC/uA2E1zG3IDH5s4Sn2V2og1gMiKyNfHn1JDEbSnSckYtfVNRjAv7WBotRnjwcsPcQKzn8STN8b1B7n/pnKdEIxvfVn/9r/cVxgzKElsRuwz9eszO/eZFiOj+GmJ0VgL+Rd4yecOogFxJaKivxV6zVU9/4TCyThh3ycSjh1cvJV+0UfZW9IPjCGgA6Ae6cFHdkDYNUFmPHm1K81d3B+Pp9z5W+W/0ioiZgj8OhzolJ3Ord2S1D8UIq7mBSJD2rANUjA+gZUQNNLSZMN4kN08qn7KvhGCJiZeaKgz5Tb/KEhaWynL5sbKsH6etIDHwcZSBwdLGK8iTsjCUfi0ZqqMrvuydERYAMZGewy2H7nXfo1FWs9wwxJ1IztZkWLJ/KnwD6Zmo0rreyPdce1m+v0gS9i18qmISHtQ7VSyyNVW27iARyVDP8njW2S+r659LoJsGxOSuh5rTe8Oj/Bff2er8qMBCHi2qza7gJZPWSOanqYeKuyOeuwczsyuxnLpv8f8kXiU46l7PgKuNIyfCctZYvZ7jDvtLgGXdLBBL1MhfkE50mtde1w9sKuLrRaRb7T58E1zRZQn6aKEv6vPsazJpq+SySrbMGcTug805HoTeu31bez5yvLK057KerH16ZvURVNwUtRJOwYoF/FMjUxGc=
+  app: sweater-weather-python
+  on: main
+  run: python manage.py migrate
