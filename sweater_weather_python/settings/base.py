@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'sweater_weather_python.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'sweater_weather_python',
         'HOST': 'localhost',
         'PORT': '5432',
