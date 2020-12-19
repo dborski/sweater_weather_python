@@ -1,0 +1,1 @@
+web: gunicorn sweather_weather_python.wsgi
