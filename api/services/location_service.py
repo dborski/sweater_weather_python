@@ -17,7 +17,8 @@ def get_latlng(city, state):
         f"?key={os.getenv('MAPQUEST_KEY')}"
         f'&location={city},{state}'
     )
-    
+    print(response.status_code)
+    print(response.json())
     if response.status_code == 200:
       latlng = response.json()['results'][0]['locations'][0]['latLng']
       payload['lat'] = latlng['lat']
