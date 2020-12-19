@@ -10,6 +10,12 @@ API Services Used:
 ## Contributors
 * [Derek Borski](https://github.com/dborski)
 
+## Tech Stack
+* Django
+* PostgreSQL
+* Travis CI
+* Heroku
+
 ## API Endpoints
 
 ### Forecast
