@@ -1,4 +1,5 @@
 # Sweater Weather
+[![Build Status](https://travis-ci.com/dborski/sweater_weather_python.svg?branch=main)](https://travis-ci.com/github/dborski/sweater_weather_python)
 
 Sweater Weather is the backend of a service-oriented application that builds and exposes multiple API endpoints. The application allows the user to plan road trips and see the current weather as well as the forecasted weather at the destination.
 
