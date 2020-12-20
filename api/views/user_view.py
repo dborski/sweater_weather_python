@@ -21,8 +21,7 @@ def _registration_success(body):
     success = False
 
     # check if there are any fields missing
-    errors = [
-        f'Missing {req}' for req in requirements if req not in body_params]
+    errors = [f'Missing {req}' for req in requirements if req not in body_params]
 
     if errors:
         return success, errors
@@ -48,22 +47,18 @@ def _login_success(request, body):
     requirements = ['username', 'password']
     body_params = set(body)
     user = None
+    success = False
 
     # check if there are any fields missing
-    errors = [
-        f'Must include {req}' for req in requirements if req not in body_params]
+    errors = [f'Must include {req}' for req in requirements if req not in body_params]
 
     if not errors:
-        user = authenticate(
-            request, username=body['username'], password=body['password'])
+        user = authenticate(request, username=body['username'], password=body['password'])
         if user is not None:
             login(request, user)
             success = True
         else:
             errors.append('Credentials are invalid')
-            success = False
-    else:
-        success = False
 
     return success, errors, user
 
