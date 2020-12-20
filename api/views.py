@@ -1,6 +1,5 @@
 import json
 from django.http import JsonResponse
-from django.http import HttpResponse
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist

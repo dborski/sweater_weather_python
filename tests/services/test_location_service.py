@@ -1,6 +1,3 @@
-import os
-import json
-import requests
 from django.test import TestCase
 from api.services.location_service import LocationService
 

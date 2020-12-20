@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from api.models import Profile
 
+
 class ProfileModelTest(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(username='user1@email.com', email='user1@email.com', password='password')

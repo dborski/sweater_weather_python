@@ -1,5 +1,4 @@
 import os
-import json
 import requests
 from dotenv import load_dotenv, find_dotenv
 from django.http import JsonResponse

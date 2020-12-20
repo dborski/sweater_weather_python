@@ -1,5 +1,5 @@
-import json
 from django.test import TestCase
+
 
 class GetForecastTest(TestCase):
     def test_happy_path_get_weather_for_a_city(self):
