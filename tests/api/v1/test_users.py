@@ -139,7 +139,7 @@ class UserLoginTest(TestCase):
         self.assertEqual(response.status_code, 401)
         self.assertEqual(json_response['success'], False)
         self.assertEqual(json_response['error'], 401)
-        self.assertEqual(json_response['errors'], 'Credentials are incorrect')
+        self.assertEqual(json_response['errors'], 'Credentials are invalid')
 
     def test_sad_path_logs_in_a_user_password_incorrect(self):
         body = {
@@ -153,7 +153,7 @@ class UserLoginTest(TestCase):
         self.assertEqual(response.status_code, 401)
         self.assertEqual(json_response['success'], False)
         self.assertEqual(json_response['error'], 401)
-        self.assertEqual(json_response['errors'], 'Credentials are incorrect')
+        self.assertEqual(json_response['errors'], 'Credentials are invalid')
 
     def test_sad_path_logs_in_a_user_missing_username(self):
         body = {

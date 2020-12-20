@@ -1,4 +1,3 @@
-import json
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
@@ -72,7 +71,7 @@ def _login_success(request, body, user):
             login(request, found_user)
             return True, '_'
         else:
-            errors.append('Credentials are incorrect')
+            errors.append('Credentials are invalid')
             return False, errors
     else:
         return False, errors
@@ -103,7 +102,8 @@ class ForecastView(APIView):
         if location:
             split_location = location.split(",")
         else:
-            return JsonResponse(_error_payload, status=400)
+            error = 'Missing location query parameter'
+            return JsonResponse(_error_payload(error), status=400)
 
         if len(split_location) == 2:
             forecast = sh.get_geocoded_weather(split_location[0], split_location[1]).json()
