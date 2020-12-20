@@ -17,18 +17,6 @@ def _forecast_payload():
     }
 
 
-def convert_to_formatted_string(number):
-    return f'{number} mph'
-
-def convert_to_cardinals(degrees):
-    dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
-            'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
-
-    ix = round(degrees / (360. / len(dirs)))
-    cardinal = dirs[ix % len(dirs)]
-
-    return f'from {cardinal}'
-
 class ForecastParser:
     def __init__(self, forecast):
         self.timezone = forecast['timezone']
@@ -36,6 +24,19 @@ class ForecastParser:
         self.current = forecast['current']
         self.hourly = forecast['hourly']
         self.daily = forecast['daily']
+    
+    def convert_to_formatted_string(self, number):
+        return f'{number} mph'
+
+
+    def convert_to_cardinals(self, degrees):
+        dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
+                'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
+
+        ix = round(degrees / (360. / len(dirs)))
+        cardinal = dirs[ix % len(dirs)]
+
+        return f'from {cardinal}'
 
     def covert_to_localtime(self, utctime, new_format):
         format = '%Y-%m-%d %H:%M:%S %z'
@@ -74,8 +75,8 @@ class ForecastParser:
                 {
                     "time": self.covert_to_localtime(weather_info['dt'], format),
                     "temp": weather_info['temp'],
-                    "wind_speed": convert_to_formatted_string(weather_info['wind_speed']),
-                    "wind_direction": convert_to_cardinals(weather_info['wind_deg']),
+                    "wind_speed": self.convert_to_formatted_string(weather_info['wind_speed']),
+                    "wind_direction": self.convert_to_cardinals(weather_info['wind_deg']),
                     "conditions": weather_info['weather'][0]['description'],
                     "icon": weather_info['weather'][0]['icon']
                 }
