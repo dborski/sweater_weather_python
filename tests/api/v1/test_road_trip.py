@@ -29,6 +29,22 @@ class GetRoadTripTest(TestCase):
         self.assertIsNotNone(json_response['data']['attributes']['weather_at_eta']['temperature'])
         self.assertIsInstance(json_response['data']['attributes']['weather_at_eta']['conditions'], str)
 
+    def test_sad_path_api_key_wrong(self):
+        body = {
+            "origin": "Denver,CO",
+            "destination": "Taos,NM",
+            "api_key": 'aaa-bbb-ccc'
+        }
+
+        response = self.client.post('/api/v1/road_trip', body)
+
+        json_response = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(json_response['success'], False)
+        self.assertEqual(json_response['error'], 400)
+        self.assertEqual(json_response['errors'], 'A user does not exist with this API key')
+
     def test_sad_path_api_key_missing(self):
         body = {
             "origin": "Denver,CO",

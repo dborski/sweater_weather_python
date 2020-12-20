@@ -58,6 +58,7 @@ def _road_trip_requirements_met(body):
         user = User.objects.get(profile__api_key=body['api_key'])
     except ObjectDoesNotExist:
         errors.append('A user does not exist with this API key')
+        pass
     else:
         success = True
     
