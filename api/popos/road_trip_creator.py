@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from api.models import RoadTrip
 from api.services.location_service import LocationService
-from api.services.weather_service import WeatherService
+import api.popos.services_helper as sh
 
 
 
@@ -70,10 +70,8 @@ class RoadTripCreator:
         else:
             # Get lat and lng for end location
             city, state = self.end_location.split(',')
-            latlng = LocationService().get_latlng(city, state)
 
-            # Get weather for end location, specifically hourly
-            forecast = WeatherService().get_forecast(latlng['lat'], latlng['lng']).json()
+            forecast = sh.get_geocoded_weather(city, state).json()
 
             # Find total travel time in travel_time variable
             travel_time = travel_time[1]

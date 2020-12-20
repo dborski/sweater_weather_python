@@ -7,8 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 import uuid
 
-from api.services.location_service import LocationService
-from api.services.weather_service import WeatherService
+import api.popos.services_helper as sh
 from api.services.photo_service import PhotoService
 from api.popos.forecast_parser import ForecastParser
 from api.popos.photo_parser import PhotoParser
@@ -45,6 +44,30 @@ def _registration_success(body, errors):
         return True
     else:
         errors.append("The passwords do not match")
+        return False
+
+def _road_trip_requirements_met(body, errors, user):
+    if 'api_key' in body:
+        pass
+    else:
+        errors.append("Must include API key")
+        return False
+    if 'origin' in body:
+        pass
+    else:
+        errors.append("Must include origin")
+        return False
+    if 'destination' in body:
+        pass
+    else:
+        errors.append("Must include destination")
+        return False
+
+    try:
+        user.append(User.objects.get(profile__api_key=body['api_key']))
+        return True
+    except ObjectDoesNotExist:
+        errors.append("This email already exists")
         return False
 
 def _login_success(request, body, user):
@@ -88,9 +111,9 @@ class ForecastView(APIView):
             return JsonResponse(_error_payload, status=400)
 
         if len(split_location) == 2:
-            results = LocationService().get_latlng(split_location[0], split_location[1])
-            forecast = WeatherService().get_forecast(str(results['lat']), str(results['lng'])).json()
+            forecast = sh.get_geocoded_weather(split_location[0], split_location[1]).json()
             forecast_payload = ForecastParser(forecast).get_forecast_payload()
+
             return JsonResponse(forecast_payload)
         else:
             error = "Must include city and state ex. /forecast?location=denver,co"
@@ -147,26 +170,3 @@ class RoadTripView(APIView):
         else:
             return JsonResponse(_error_payload(errors[0]))
 
-    def _road_trip_requirements_met(body, errors, user):
-        if 'api_key' in body:
-            pass
-        else:
-            errors.append("Must include API key")
-            return False
-        if 'origin' in body:
-            pass
-        else:
-            errors.append("Must include origin")
-            return False
-        if 'destination' in body:
-            pass
-        else:
-            errors.append("Must include destination")
-            return False
-
-        try:
-            user.append(User.objects.get(profile__api_key=body['api_key']))
-            return True
-        except ObjectDoesNotExist:
-            errors.append("This email already exists")
-            return False
