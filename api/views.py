@@ -7,7 +7,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 import uuid
 
-from api.services.location_service import get_latlng, get_directions
+# from api.services.location_service import get_latlng, get_directions
+from api.services.location_service import LocationService
 from api.services.weather_service import get_forecast
 from api.services.photo_service import get_single_photo_by_keyword
 from api.popos.forecast_parser import ForecastParser
@@ -88,7 +89,7 @@ class ForecastView(APIView):
       return JsonResponse(_error_payload, status=400)
 
     if len(split_location) == 2:
-      results = get_latlng(split_location[0], split_location[1])
+      results = LocationService().get_latlng(split_location[0], split_location[1])
       forecast = get_forecast(str(results['lat']), str(results['lng'])).json()
       forecast_payload = ForecastParser(forecast).get_forecast_payload()
       return JsonResponse(forecast_payload)

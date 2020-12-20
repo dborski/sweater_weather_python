@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from api.models import RoadTrip
-from api.services.location_service import get_directions, get_latlng
+# from api.services.location_service import get_directions, get_latlng
+from api.services.location_service import LocationService
 from api.services.weather_service import get_forecast
 
 
@@ -40,7 +41,7 @@ class RoadTripCreator:
   def __init__(self, start_location, end_location, user):
     self.start_location = start_location
     self.end_location = end_location
-    self.directions = get_directions(start_location, end_location).json()
+    self.directions = LocationService().get_directions(start_location, end_location).json()
     self.user = user
 
   def get_travel_time(self):
@@ -70,7 +71,7 @@ class RoadTripCreator:
     else:
       # Get lat and lng for end location
       city, state = self.end_location.split(',')
-      latlng = get_latlng(city, state)
+      latlng = LocationService().get_latlng(city, state)
 
       # Get weather for end location, specifically hourly
       forecast = get_forecast(latlng['lat'], latlng['lng']).json()

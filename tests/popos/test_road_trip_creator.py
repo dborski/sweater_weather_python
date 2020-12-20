@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from api.models import RoadTrip
 from api.popos.road_trip_creator import RoadTripCreator
-from api.services.location_service import get_directions
+# from api.services.location_service import get_directions
 
 
 class RoadTripCreatorTest(TestCase):
