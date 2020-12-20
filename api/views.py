@@ -165,8 +165,7 @@ class RoadTripView(APIView):
         user = []
 
         if _road_trip_requirements_met(body, errors, user):
-            trip_payload = RoadTripCreator(body['origin'], body['destination'], user[0]).create_road_trip()
-            return JsonResponse(trip_payload, status=201)
+            return RoadTripCreator(body['origin'], body['destination'], user[0]).create_road_trip()
         else:
-            return JsonResponse(_error_payload(errors[0]))
+            return JsonResponse(_error_payload(errors[0]), status=400)
 
