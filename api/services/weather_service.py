@@ -4,6 +4,7 @@ from dotenv import load_dotenv, find_dotenv
 from django.http import JsonResponse
 load_dotenv(find_dotenv())
 
+
 class WeatherService:
     def get_forecast(self, lat, lng, exclude='minutely', units='imperial'):
         response = requests.get(

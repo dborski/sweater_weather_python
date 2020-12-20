@@ -62,6 +62,7 @@ def _login_success(request, body):
 
     return success, errors, user
 
+
 class UserRegistrationView(APIView):
     def post(self, request):
         body = request.data

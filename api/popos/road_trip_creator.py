@@ -5,7 +5,6 @@ from django.http import JsonResponse
 import api.popos.services_helper as sh
 
 
-
 def _road_trip_payload(road_trip):
     return {
         "data": {

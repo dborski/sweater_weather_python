@@ -4,6 +4,7 @@ from dotenv import load_dotenv, find_dotenv
 from django.http import JsonResponse
 load_dotenv(find_dotenv())
 
+
 class LocationService:
     def get_latlng(self, city, state):
         payload = {
