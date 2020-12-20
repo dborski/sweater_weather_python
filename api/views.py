@@ -15,12 +15,13 @@ from api.popos.road_trip_creator import RoadTripCreator
 def _registration_success(body):
     requirements = ['email', 'password', 'password_confirmation']
     body_params = set(body)
+    success = False
 
     # check if there are any fields missing
     errors = [f'Missing {req}' for req in requirements if req not in body_params]
 
     if errors:
-        return False, errors
+        return success, errors
 
     # check if email is unique
     try:
@@ -29,52 +30,59 @@ def _registration_success(body):
         pass
     else:
         errors.append("This email already exists")
-        return False, errors
+        return success, errors
 
     # check if passwords match
     if body['password'] == body['password_confirmation']:
-        return True, '_'
+        success = True
     else:
         errors.append("The passwords do not match")
-        return False, errors
+
+    return success, errors
 
 
-def _road_trip_requirements_met(body, user):
+def _road_trip_requirements_met(body):
     requirements = ['api_key', 'origin', 'destination']
     body_params = set(body)
+    user = None
+    success = False
 
     # check if there are any fields missing
     errors = [f'Must include {req}' for req in requirements if req not in body_params]
 
     if errors:
-        return False, errors
+        return success, errors, user
 
     # check if a user with submitted API key exists
     try:
-        user.append(User.objects.get(profile__api_key=body['api_key']))
+        user = User.objects.get(profile__api_key=body['api_key'])
     except ObjectDoesNotExist:
-        return False, 'A user does not exist with this API key'
+        errors.append('A user does not exist with this API key')
     else:
-        return True, '_'
+        success = True
+    
+    return success, errors, user
 
-def _login_success(request, body, user):
+def _login_success(request, body):
     requirements = ['username', 'password']
     body_params = set(body)
+    user = None
 
     # check if there are any fields missing
     errors = [f'Must include {req}' for req in requirements if req not in body_params]
 
     if not errors:
-        found_user = authenticate(request, username=body['username'], password=body['password'])
-        if found_user is not None:
-            user.append(found_user)
-            login(request, found_user)
-            return True, '_'
+        user = authenticate(request, username=body['username'], password=body['password'])
+        if user is not None:
+            login(request, user)
+            success = True
         else:
             errors.append('Credentials are invalid')
-            return False, errors
+            success =  False
     else:
-        return False, errors
+        success = False
+
+    return success, errors, user
 
 def _user_payload(user):
     return {
@@ -129,9 +137,9 @@ class BackgroundView(APIView):
 class UserRegistrationView(APIView):
     def post(self, request):
         body = request.data
-        reg_results = _registration_success(body)
+        success, errors = _registration_success(body)
 
-        if reg_results[0]:
+        if success:
             new_user = User.objects.create_user(
                 body['email'], 
                 body['email'], 
@@ -139,26 +147,24 @@ class UserRegistrationView(APIView):
             )
             return JsonResponse(_user_payload(new_user), status=201)
         else:
-            return JsonResponse(_error_payload(','.join(reg_results[1])), status=400)
+            return JsonResponse(_error_payload(','.join(errors)), status=400)
 
 class UserLoginView(APIView):
     def post(self, request):
         body = request.data
-        user = []
-        login_results = _login_success(request, body, user)
+        success, errors, user = _login_success(request, body)
 
-        if login_results[0]:
-            return JsonResponse(_user_payload(user[0]), status=200)
+        if success:
+            return JsonResponse(_user_payload(user), status=200)
         else:
-            return JsonResponse(_error_payload('.'.join(login_results[1]), 401), status=401)
+            return JsonResponse(_error_payload('.'.join(errors), 401), status=401)
 
 class RoadTripView(APIView):
     def post(self, request):
         body = request.data
-        user = []
-        requirements = _road_trip_requirements_met(body, user)
+        success, errors, user = _road_trip_requirements_met(body)
 
-        if requirements[0]:
-            return RoadTripCreator(body['origin'], body['destination'], user[0]).create_road_trip()
+        if success:
+            return RoadTripCreator(body['origin'], body['destination'], user).create_road_trip()
         else:
-            return JsonResponse(_error_payload(','.join(requirements[1])), status=400)
+            return JsonResponse(_error_payload(','.join(errors)), status=400)
