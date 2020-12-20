@@ -18,9 +18,9 @@ def _registration_success(body):
     requirements = ['email', 'password', 'password_confirmation']
     body_params = set(body)
 
+    # check if there are any fields missing
     errors = [f'Missing {req}' for req in requirements if req not in body_params]
 
-    # check if there are any fields missing
     if errors:
         return False, errors
 
@@ -32,7 +32,7 @@ def _registration_success(body):
     else:
         errors.append("This email already exists")
         return False, errors
-        
+
     # check if passwords match
     if body['password'] == body['password_confirmation']:
         return True, '_'
@@ -45,9 +45,9 @@ def _road_trip_requirements_met(body, user):
     requirements = ['api_key', 'origin', 'destination']
     body_params = set(body)
 
+    # check if there are any fields missing
     errors = [f'Must include {req}' for req in requirements if req not in body_params]
 
-    # check if there are any fields missing
     if errors:
         return False, errors
 
@@ -60,16 +60,23 @@ def _road_trip_requirements_met(body, user):
         return True, '_'
 
 def _login_success(request, body, user):
-    if 'username' and 'password' in body:
+    requirements = ['username', 'password']
+    body_params = set(body)
+
+    # check if there are any fields missing
+    errors = [f'Must include {req}' for req in requirements if req not in body_params]
+
+    if not errors:
         found_user = authenticate(request, username=body['username'], password=body['password'])
         if found_user is not None:
             user.append(found_user)
             login(request, found_user)
-            return True
+            return True, '_'
         else:
-            return False
+            errors.append('Credentials are incorrect')
+            return False, errors
     else:
-        False
+        return False, errors
 
 def _user_payload(user):
     return {
@@ -108,7 +115,6 @@ class ForecastView(APIView):
             error = "Must include city and state ex. /forecast?location=denver,co"
             return JsonResponse(_error_payload(error), status=400)
   
-
 class BackgroundView(APIView):
     def get(self, request):
         if request.GET:
@@ -124,9 +130,9 @@ class BackgroundView(APIView):
 class UserRegistrationView(APIView):
     def post(self, request):
         body = request.data
-        results = _registration_success(body)
+        reg_results = _registration_success(body)
 
-        if results[0]:
+        if reg_results[0]:
             new_user = User.objects.create_user(
                 body['email'], 
                 body['email'], 
@@ -134,24 +140,23 @@ class UserRegistrationView(APIView):
             )
             return JsonResponse(_user_payload(new_user), status=201)
         else:
-            return JsonResponse(_error_payload(','.join(results[1])), status=400)
+            return JsonResponse(_error_payload(','.join(reg_results[1])), status=400)
 
 class UserLoginView(APIView):
     def post(self, request):
         body = request.data
         user = []
+        login_results = _login_success(request, body, user)
 
-        if _login_success(request, body, user):
+        if login_results[0]:
             return JsonResponse(_user_payload(user[0]), status=200)
         else:
-            error = 'Credentials are incorrect'
-            return JsonResponse(_error_payload(error, 401), status=401)
+            return JsonResponse(_error_payload('.'.join(login_results[1]), 401), status=401)
 
 class RoadTripView(APIView):
     def post(self, request):
         body = request.data
         user = []
-
         requirements = _road_trip_requirements_met(body, user)
 
         if requirements[0]:
