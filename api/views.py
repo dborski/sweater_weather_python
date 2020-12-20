@@ -7,10 +7,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login
 import uuid
 
-# from api.services.location_service import get_latlng, get_directions
 from api.services.location_service import LocationService
 from api.services.weather_service import get_forecast
-from api.services.photo_service import get_single_photo_by_keyword
+from api.services.photo_service import PhotoService
 from api.popos.forecast_parser import ForecastParser
 from api.popos.photo_parser import PhotoParser
 from api.popos.road_trip_creator import RoadTripCreator
@@ -103,7 +102,7 @@ class BackgroundView(APIView):
     if request.GET:
       location = request.GET['location']
       city = location.split(",")[0]
-      photo_data = get_single_photo_by_keyword(city)
+      photo_data = PhotoService().get_single_photo_by_keyword(city)
       background_payload = PhotoParser(photo_data, location).get_photo_payload()
       return JsonResponse(background_payload)
     else:
