@@ -54,7 +54,7 @@ class ForecastParser:
         return {
                 "datetime": self.covert_to_localtime(self.current['dt'], format),
                 "sunrise": self.covert_to_localtime(self.current['sunrise'], format),
-                "sunset": self.covert_to_localtime(self.current['su=nset'], format),
+                "sunset": self.covert_to_localtime(self.current['sunset'], format),
                 "temperature": self.current['temp'],
                 "feels_like": self.current['feels_like'],
                 "humidity": self.current['humidity'],
