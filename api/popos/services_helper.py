@@ -1,5 +1,4 @@
 from api.services.location_service import LocationService
-from api.services.photo_service import PhotoService
 from api.services.weather_service import WeatherService
 
 def get_geocoded_weather(city, state):
