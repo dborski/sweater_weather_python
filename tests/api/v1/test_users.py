@@ -97,7 +97,7 @@ class UserRegistrationTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json_response['success'], False)
         self.assertEqual(json_response['error'], 400)
-        self.assertEqual(json_response['errors'], 'Missing password confirmation')
+        self.assertEqual(json_response['errors'], 'Missing password_confirmation')
 
 class UserLoginTest(TestCase):
     def setUp(self):

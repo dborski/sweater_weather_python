@@ -14,61 +14,50 @@ from api.popos.photo_parser import PhotoParser
 from api.popos.road_trip_creator import RoadTripCreator
 
 
-def _registration_success(body, errors):
-    if 'email' in body:
-        pass
-    else:
-        errors.append("Missing email")
-        return False
+def _registration_success(body):
+    requirements = ['email', 'password', 'password_confirmation']
+    body_params = set(body)
 
-    if 'password' in body:
-        pass
-    else:
-        errors.append("Missing password")
-        return False
+    errors = [f'Missing {req}' for req in requirements if req not in body_params]
 
-    if 'password_confirmation' in body:
-        pass
-    else:
-        errors.append("Missing password confirmation")
-        return False
+    # check if there are any fields missing
+    if errors:
+        return False, errors
 
+    # check if email is unique
     try:
-        user_check = User.objects.get(email=body['email'])
-        errors.append("This email already exists")
-        return False
+        user = User.objects.get(email=body['email'])
     except ObjectDoesNotExist:
         pass
-
+    else:
+        errors.append("This email already exists")
+        return False, errors
+        
+    # check if passwords match
     if body['password'] == body['password_confirmation']:
-        return True
+        return True, '_'
     else:
         errors.append("The passwords do not match")
-        return False
+        return False, errors
 
-def _road_trip_requirements_met(body, errors, user):
-    if 'api_key' in body:
-        pass
-    else:
-        errors.append("Must include API key")
-        return False
-    if 'origin' in body:
-        pass
-    else:
-        errors.append("Must include origin")
-        return False
-    if 'destination' in body:
-        pass
-    else:
-        errors.append("Must include destination")
-        return False
 
+def _road_trip_requirements_met(body, user):
+    requirements = ['api_key', 'origin', 'destination']
+    body_params = set(body)
+
+    errors = [f'Must include {req}' for req in requirements if req not in body_params]
+
+    # check if there are any fields missing
+    if errors:
+        return False, errors
+
+    # check if a user with submitted API key exists
     try:
         user.append(User.objects.get(profile__api_key=body['api_key']))
-        return True
     except ObjectDoesNotExist:
-        errors.append("This email already exists")
-        return False
+        return False, 'A user does not exist with this API key'
+    else:
+        return True, '_'
 
 def _login_success(request, body, user):
     if 'username' and 'password' in body:
@@ -135,17 +124,17 @@ class BackgroundView(APIView):
 class UserRegistrationView(APIView):
     def post(self, request):
         body = request.data
-        errors = []
+        results = _registration_success(body)
 
-        if _registration_success(body, errors):
+        if results[0]:
             new_user = User.objects.create_user(
-            body['email'], 
-            body['email'], 
-            body['password']
+                body['email'], 
+                body['email'], 
+                body['password']
             )
             return JsonResponse(_user_payload(new_user), status=201)
         else:
-            return JsonResponse(_error_payload(errors[0]), status=400)
+            return JsonResponse(_error_payload(','.join(results[1])), status=400)
 
 class UserLoginView(APIView):
     def post(self, request):
@@ -161,11 +150,11 @@ class UserLoginView(APIView):
 class RoadTripView(APIView):
     def post(self, request):
         body = request.data
-        errors = []
         user = []
 
-        if _road_trip_requirements_met(body, errors, user):
+        requirements = _road_trip_requirements_met(body, user)
+
+        if requirements[0]:
             return RoadTripCreator(body['origin'], body['destination'], user[0]).create_road_trip()
         else:
-            return JsonResponse(_error_payload(errors[0]), status=400)
-
+            return JsonResponse(_error_payload(','.join(requirements[1])), status=400)

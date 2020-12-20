@@ -43,7 +43,7 @@ class GetRoadTripTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(json_response['success'], False)
         self.assertEqual(json_response['error'], 400)
-        self.assertEqual(json_response['errors'], "Must include API key")
+        self.assertEqual(json_response['errors'], "Must include api_key")
 
     def test_sad_path_origin_missing(self):
         body = {
