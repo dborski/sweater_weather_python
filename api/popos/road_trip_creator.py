@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from api.models import RoadTrip
 from api.services.location_service import LocationService
+from django.http import JsonResponse
 import api.popos.services_helper as sh
 
 
@@ -50,17 +51,17 @@ class RoadTripCreator:
             travel_time = self.directions['route']['formattedTime']
             hours, minutes, seconds = travel_time.split(':')
 
-        if hours == '00':
-            new_string = f'{minutes} minutes'
-        else:
-            new_string = f'{hours} hours, {minutes} minutes'
+            if hours == '00':
+                new_string = f'{minutes} minutes'
+            else:
+                new_string = f'{hours} hours, {minutes} minutes'
 
-        return new_string, travel_time
+            return new_string, travel_time
 
     def get_weather_at_eta(self):
         payload = {
-        'temperature': None,
-        'conditions': None
+            'temperature': None,
+            'conditions': None
         }
         # Get travel time in hours and minutes
         travel_time = self.get_travel_time()
@@ -76,7 +77,6 @@ class RoadTripCreator:
             # Find total travel time in travel_time variable
             travel_time = travel_time[1]
             hours, minutes, seconds = travel_time.split(':')
-            # hours = travel_time.hour
             decimal_minutes = (float(minutes) / 60)
             rounded = round(float(hours) + decimal_minutes)
 
@@ -100,19 +100,19 @@ class RoadTripCreator:
         travel_time = self.get_travel_time()
         weather = self.get_weather_at_eta()
 
-        if travel_time != 'Impossible' or weather is not None:
+        if travel_time != 'Impossible' and weather is not None:
             new_trip = RoadTrip.objects.create(
-            user=self.user,
-            name=self.name_creator(),
-            start_city=self.start_location,
-            end_city=self.end_location,
-            travel_time=travel_time[0],
-            arrival_temp=weather['temperature'],
-            arrival_conditions=weather['conditions']
+                user=self.user,
+                name=self.name_creator(),
+                start_city=self.start_location,
+                end_city=self.end_location,
+                travel_time=travel_time[0],
+                arrival_temp=weather['temperature'],
+                arrival_conditions=weather['conditions']
             )
 
-            return _road_trip_payload(new_trip)
+            return JsonResponse(_road_trip_payload(new_trip), status=201)
         else:
-            return _error_payload(self.start_location, self.end_location)
+            return JsonResponse(_error_payload(self.start_location, self.end_location), status=400)
     
 
